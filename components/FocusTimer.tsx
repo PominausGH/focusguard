@@ -2,19 +2,24 @@ import React from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocus } from '../contexts/FocusContext';
+import { useTasks } from '../contexts/TaskContext';
 import { FOCUS_PRESETS, FocusPresetType } from '../types';
 import { Svg, Circle } from 'react-native-svg';
 
 interface FocusTimerProps {
   visible: boolean;
   onClose: () => void;
-  linkedTaskTitle?: string;
 }
 
-export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose, linkedTaskTitle }) => {
+export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose }) => {
   const { session, timeRemaining, endSession } = useFocus();
+  const { tasks } = useTasks();
 
   if (!session) return null;
+
+  const linkedTask = session.linkedTaskId
+    ? tasks.find(t => t.id === session.linkedTaskId)
+    : undefined;
 
   const preset = FOCUS_PRESETS[session.mode];
   const totalDuration = session.duration;
@@ -40,6 +45,8 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose, linked
   const stateLabel = session.state === 'working' ? 'Focus Time' :
                      session.state === 'shortBreak' ? 'Short Break' : 'Long Break';
 
+  const sessionProgress = `Session ${session.currentSessionInCycle}/${preset.longBreakAfter}`;
+
   // Circle progress parameters
   const size = 240;
   const strokeWidth = 12;
@@ -60,12 +67,15 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose, linked
             <Ionicons name="chevron-down" size={24} color="#8b8b8b" />
           </TouchableOpacity>
 
-          <Text style={styles.presetName}>{preset.name}</Text>
+          <View style={styles.headerInfo}>
+            <Text style={styles.presetName}>{preset.name}</Text>
+            <Text style={styles.sessionProgress}>{sessionProgress}</Text>
+          </View>
 
-          {linkedTaskTitle && (
+          {linkedTask && (
             <View style={styles.taskBadge}>
               <Ionicons name="checkbox-outline" size={16} color="#e94560" />
-              <Text style={styles.taskTitle}>{linkedTaskTitle}</Text>
+              <Text style={styles.taskTitle}>{linkedTask.title}</Text>
             </View>
           )}
 
@@ -139,11 +149,20 @@ const styles = StyleSheet.create({
     right: 16,
     padding: 8,
   },
+  headerInfo: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   presetName: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  sessionProgress: {
+    fontSize: 14,
+    color: '#8b8b8b',
+    fontWeight: '600',
   },
   taskBadge: {
     flexDirection: 'row',

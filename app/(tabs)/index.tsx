@@ -19,13 +19,15 @@ import { TaskInput } from '../../components/TaskInput';
 import { DailyProgress } from '../../components/DailyProgress';
 import { FocusTimer } from '../../components/FocusTimer';
 import { MAX_DAILY_TASKS, FocusPresetType, FOCUS_PRESETS } from '../../types';
+import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
 
 export default function TasksScreen() {
   const { tasks, loading, canAddTask, completedCount, addTask, completeTask, uncompleteTask, deleteTask } = useTasks();
   const { user } = useAuth();
-  const { startSession, session, isActive } = useFocus();
+  const { startSession, session, isActive, skipBreak, endSession } = useFocus();
   const [showPresetModal, setShowPresetModal] = useState(false);
   const [showTimerModal, setShowTimerModal] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>();
 
   const handleAddTask = async (title: string) => {
     try {
@@ -81,9 +83,10 @@ export default function TasksScreen() {
   };
 
   const handleStartFocus = (preset: FocusPresetType) => {
-    startSession(preset);
+    startSession(preset, selectedTaskId);
     setShowPresetModal(false);
     setShowTimerModal(true);
+    setSelectedTaskId(undefined); // Reset selection
   };
 
   const handleFocusButtonPress = () => {
@@ -100,6 +103,38 @@ export default function TasksScreen() {
     if (hour < 18) return 'Good afternoon';
     return 'Good evening';
   };
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onSpace: () => {
+      // Toggle timer modal if session is active
+      if (isActive) {
+        setShowTimerModal(prev => !prev);
+      }
+    },
+    onReset: () => {
+      if (isActive && typeof window !== 'undefined' && window.confirm) {
+        const confirmed = window.confirm('End this focus session?');
+        if (confirmed) {
+          session?.state === 'working' ? skipBreak() : endSession();
+        }
+      }
+    },
+    onSkip: () => {
+      if (session?.state !== 'working') {
+        skipBreak();
+      }
+    },
+    onPreset1: () => {
+      if (!isActive) handleStartFocus('classic');
+    },
+    onPreset2: () => {
+      if (!isActive) handleStartFocus('deepwork');
+    },
+    onPreset3: () => {
+      if (!isActive) handleStartFocus('sprint');
+    },
+  });
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -143,6 +178,7 @@ export default function TasksScreen() {
                 task={task}
                 onComplete={() => handleCompleteTask(task.id, task.completed)}
                 onDelete={() => handleDeleteTask(task.id)}
+                isFocusing={session?.linkedTaskId === task.id && session?.state === 'working'}
               />
             ))}
           </View>
@@ -167,11 +203,46 @@ export default function TasksScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.presetModal}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Choose Focus Mode</Text>
+              <Text style={styles.modalTitle}>Start Focus Session</Text>
               <TouchableOpacity onPress={() => setShowPresetModal(false)}>
                 <Ionicons name="close" size={24} color="#8b8b8b" />
               </TouchableOpacity>
             </View>
+
+            {/* Task Selection */}
+            {tasks.length > 0 && (
+              <>
+                <Text style={styles.sectionLabel}>Focus on task (optional)</Text>
+                <View style={styles.taskSelector}>
+                  <TouchableOpacity
+                    style={[styles.taskOption, !selectedTaskId && styles.taskOptionSelected]}
+                    onPress={() => setSelectedTaskId(undefined)}
+                  >
+                    <Ionicons
+                      name={!selectedTaskId ? "radio-button-on" : "radio-button-off"}
+                      size={20}
+                      color={!selectedTaskId ? "#e94560" : "#8b8b8b"}
+                    />
+                    <Text style={styles.taskOptionText}>No specific task</Text>
+                  </TouchableOpacity>
+                  {tasks.filter(t => !t.completed).map((task) => (
+                    <TouchableOpacity
+                      key={task.id}
+                      style={[styles.taskOption, selectedTaskId === task.id && styles.taskOptionSelected]}
+                      onPress={() => setSelectedTaskId(task.id)}
+                    >
+                      <Ionicons
+                        name={selectedTaskId === task.id ? "radio-button-on" : "radio-button-off"}
+                        size={20}
+                        color={selectedTaskId === task.id ? "#e94560" : "#8b8b8b"}
+                      />
+                      <Text style={styles.taskOptionText} numberOfLines={1}>{task.title}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <Text style={styles.sectionLabel}>Choose focus mode</Text>
+              </>
+            )}
 
             {(Object.keys(FOCUS_PRESETS) as FocusPresetType[]).map((preset) => {
               const config = FOCUS_PRESETS[preset];
@@ -320,5 +391,37 @@ const styles = StyleSheet.create({
   presetDetails: {
     fontSize: 14,
     color: '#8b8b8b',
+  },
+  sectionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#8b8b8b',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  taskSelector: {
+    marginBottom: 16,
+  },
+  taskOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#0f3460',
+    gap: 12,
+  },
+  taskOptionSelected: {
+    borderColor: '#e94560',
+    backgroundColor: 'rgba(233, 69, 96, 0.1)',
+  },
+  taskOptionText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#fff',
   },
 });

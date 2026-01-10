@@ -19,6 +19,8 @@ export interface Task {
   createdAt: Date;
   completedAt?: Date;
   date: string; // YYYY-MM-DD for daily grouping
+  tags?: string[];
+  focusTime?: number; // total minutes spent focusing on this task
 }
 
 export interface MeetingSession {
@@ -58,6 +60,7 @@ export interface FocusSession {
   state: FocusState;
   pomodorosCompleted: number;
   breakStartTime?: number;
+  currentSessionInCycle: number; // 1-4 for classic, 1-3 for deepwork
 }
 
 export const FOCUS_PRESETS: Record<FocusPresetType, FocusPreset> = {

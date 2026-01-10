@@ -24,6 +24,7 @@ interface TaskContextType {
   completeTask: (taskId: string) => Promise<void>;
   uncompleteTask: (taskId: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
+  addFocusTime: (taskId: string, minutes: number) => Promise<void>;
 }
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -121,6 +122,14 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     await saveTasks(updated);
   };
 
+  const addFocusTime = async (taskId: string, minutes: number) => {
+    const updated = allTasks.map(t =>
+      t.id === taskId ? { ...t, focusTime: (t.focusTime || 0) + minutes } : t
+    );
+    setAllTasks(updated);
+    await saveTasks(updated);
+  };
+
   return (
     <TaskContext.Provider value={{
       tasks,
@@ -130,7 +139,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       addTask,
       completeTask,
       uncompleteTask,
-      deleteTask
+      deleteTask,
+      addFocusTime,
     }}>
       {children}
     </TaskContext.Provider>

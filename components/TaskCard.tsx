@@ -12,11 +12,16 @@ interface TaskCardProps {
   task: Task;
   onComplete: () => void;
   onDelete: () => void;
+  isFocusing?: boolean;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onDelete }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onDelete, isFocusing }) => {
   return (
-    <View style={[styles.container, task.completed && styles.completedContainer]}>
+    <View style={[
+      styles.container,
+      task.completed && styles.completedContainer,
+      isFocusing && styles.focusingContainer,
+    ]}>
       <TouchableOpacity
         style={[styles.checkbox, task.completed && styles.checkboxCompleted]}
         onPress={onComplete}
@@ -26,9 +31,17 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task, onComplete, onDelete }
         )}
       </TouchableOpacity>
 
-      <Text style={[styles.title, task.completed && styles.titleCompleted]}>
-        {task.title}
-      </Text>
+      <View style={styles.titleContainer}>
+        <Text style={[styles.title, task.completed && styles.titleCompleted]}>
+          {task.title}
+        </Text>
+        {isFocusing && (
+          <View style={styles.focusingBadge}>
+            <Ionicons name="timer" size={14} color="#2d6a4f" />
+            <Text style={styles.focusingText}>Focusing</Text>
+          </View>
+        )}
+      </View>
 
       <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
         <Ionicons name="trash-outline" size={20} color="#8b8b8b" />
@@ -52,6 +65,11 @@ const styles = StyleSheet.create({
     opacity: 0.7,
     borderColor: '#2d6a4f',
   },
+  focusingContainer: {
+    borderColor: '#2d6a4f',
+    borderWidth: 2,
+    backgroundColor: 'rgba(45, 106, 79, 0.05)',
+  },
   checkbox: {
     width: 28,
     height: 28,
@@ -66,8 +84,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#2d6a4f',
     borderColor: '#2d6a4f',
   },
-  title: {
+  titleContainer: {
     flex: 1,
+    gap: 6,
+  },
+  title: {
     fontSize: 16,
     color: '#fff',
     fontWeight: '500',
@@ -75,6 +96,17 @@ const styles = StyleSheet.create({
   titleCompleted: {
     textDecorationLine: 'line-through',
     color: '#8b8b8b',
+  },
+  focusingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    alignSelf: 'flex-start',
+  },
+  focusingText: {
+    fontSize: 12,
+    color: '#2d6a4f',
+    fontWeight: '600',
   },
   deleteButton: {
     padding: 8,

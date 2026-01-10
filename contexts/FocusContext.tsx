@@ -96,6 +96,7 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       linkedTaskId: taskId,
       state: 'working',
       pomodorosCompleted: 0,
+      currentSessionInCycle: 1,
     };
 
     setSession(newSession);
@@ -137,12 +138,18 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     if (!session) return;
 
     const preset = FOCUS_PRESETS[session.mode];
+    // Increment session cycle or reset after long break
+    const nextSessionInCycle = session.state === 'longBreak'
+      ? 1
+      : (session.currentSessionInCycle % preset.longBreakAfter) + 1;
+
     const updatedSession: FocusSession = {
       ...session,
       startTime: Date.now(),
       duration: preset.workDuration,
       state: 'working',
       breakStartTime: undefined,
+      currentSessionInCycle: nextSessionInCycle,
     };
 
     setSession(updatedSession);
