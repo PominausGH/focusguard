@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { MAX_DAILY_TASKS } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemedStyles } from '../hooks/useThemedStyles';
 
 interface DailyProgressProps {
   completed: number;
@@ -8,6 +10,8 @@ interface DailyProgressProps {
 }
 
 export const DailyProgress: React.FC<DailyProgressProps> = ({ completed, total }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const progress = total > 0 ? (completed / total) * 100 : 0;
   const tasksLeft = MAX_DAILY_TASKS - total;
 
@@ -37,7 +41,7 @@ export const DailyProgress: React.FC<DailyProgressProps> = ({ completed, total }
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     marginBottom: 20,
   },
@@ -49,34 +53,34 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   count: {
     fontSize: 14,
-    color: '#e94560',
+    color: colors.primary,
     fontWeight: 'bold',
   },
   progressBar: {
     height: 8,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 4,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#e94560',
+    backgroundColor: colors.primary,
     borderRadius: 4,
   },
   progressComplete: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: colors.success,
   },
   remaining: {
     marginTop: 6,
     fontSize: 12,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
 });

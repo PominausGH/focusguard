@@ -1,10 +1,13 @@
 import React from 'react';
-import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Modal, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocus } from '../contexts/FocusContext';
 import { useTasks } from '../contexts/TaskContext';
+import { useAuth } from '../contexts/AuthContext';
 import { FOCUS_PRESETS, FocusPresetType } from '../types';
 import { Svg, Circle } from 'react-native-svg';
+import { AmbientSoundControls } from './AmbientSoundControls';
+import { MusicLinksQuickAccess } from './MusicLinksQuickAccess';
 
 interface FocusTimerProps {
   visible: boolean;
@@ -14,6 +17,7 @@ interface FocusTimerProps {
 export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose }) => {
   const { session, timeRemaining, endSession } = useFocus();
   const { tasks } = useTasks();
+  const { user } = useAuth();
 
   if (!session) return null;
 
@@ -62,10 +66,11 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose }) => {
       onRequestClose={onClose}
     >
       <View style={styles.overlay}>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="chevron-down" size={24} color="#8b8b8b" />
-          </TouchableOpacity>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.card}>
+            <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <Ionicons name="chevron-down" size={24} color="#8b8b8b" />
+            </TouchableOpacity>
 
           <View style={styles.headerInfo}>
             <Text style={styles.presetName}>{preset.name}</Text>
@@ -120,7 +125,12 @@ export const FocusTimer: React.FC<FocusTimerProps> = ({ visible, onClose }) => {
             <Ionicons name="stop-circle-outline" size={24} color="#e94560" />
             <Text style={styles.endButtonText}>End Session</Text>
           </TouchableOpacity>
-        </View>
+
+          <AmbientSoundControls />
+
+          <MusicLinksQuickAccess musicLinks={user?.settings?.musicLinks || []} />
+          </View>
+        </ScrollView>
       </View>
     </Modal>
   );
@@ -130,14 +140,18 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
   card: {
     backgroundColor: '#16213e',
     borderRadius: 24,
     padding: 32,
-    width: '90%',
+    width: '100%',
     maxWidth: 400,
     alignItems: 'center',
     borderWidth: 1,

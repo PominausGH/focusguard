@@ -7,6 +7,8 @@ import {
   Text,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemedStyles } from '../hooks/useThemedStyles';
 
 interface TaskInputProps {
   onSubmit: (title: string) => void;
@@ -19,6 +21,8 @@ export const TaskInput: React.FC<TaskInputProps> = ({
   disabled,
   tasksRemaining,
 }) => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [title, setTitle] = useState('');
 
   const handleSubmit = () => {
@@ -38,7 +42,7 @@ export const TaskInput: React.FC<TaskInputProps> = ({
               ? "You've reached today's limit!"
               : "What's your focus?"
           }
-          placeholderTextColor={disabled ? '#e94560' : '#8b8b8b'}
+          placeholderTextColor={disabled ? colors.primary : colors.textSecondary}
           value={title}
           onChangeText={setTitle}
           onSubmitEditing={handleSubmit}
@@ -53,7 +57,7 @@ export const TaskInput: React.FC<TaskInputProps> = ({
           <Ionicons
             name="add"
             size={24}
-            color={disabled || !title.trim() ? '#8b8b8b' : '#fff'}
+            color={disabled || !title.trim() ? colors.textSecondary : '#fff'}
           />
         </TouchableOpacity>
       </View>
@@ -66,7 +70,7 @@ export const TaskInput: React.FC<TaskInputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     marginBottom: 24,
   },
@@ -76,23 +80,23 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     paddingRight: 60,
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   inputDisabled: {
-    borderColor: '#e94560',
+    borderColor: colors.primary,
     opacity: 0.8,
   },
   addButton: {
     position: 'absolute',
     right: 8,
-    backgroundColor: '#e94560',
+    backgroundColor: colors.primary,
     width: 40,
     height: 40,
     borderRadius: 12,
@@ -100,13 +104,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButtonDisabled: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   remainingText: {
     marginTop: 8,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     fontSize: 12,
     textAlign: 'center',
   },

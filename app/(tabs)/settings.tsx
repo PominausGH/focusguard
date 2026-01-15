@@ -12,18 +12,34 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { AnalyticsDashboard } from '../../components/AnalyticsDashboard';
+import { MusicLinksManager } from '../../components/MusicLinksManager';
+import { SessionHistoryCalendar } from '../../components/SessionHistoryCalendar';
 import { analytics } from '../../services/analytics';
+import { exportAnalyticsToCSV } from '../../utils/exportCSV';
+import { MusicLink, ThemeMode } from '../../types';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
 
 export default function SettingsScreen() {
   const { user, signOut, updateSettings } = useAuth();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [defaultSalary, setDefaultSalary] = useState(
     (user?.settings?.defaultSalary || 75000).toString()
   );
   const [notifications, setNotifications] = useState(
     user?.settings?.notifications ?? true
   );
+  const [musicLinks, setMusicLinks] = useState<MusicLink[]>(
+    user?.settings?.musicLinks || []
+  );
+  const [theme, setTheme] = useState<ThemeMode>(
+    user?.settings?.theme || 'dark'
+  );
   const [saving, setSaving] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const handleSaveSettings = async () => {
     if (!user) return;
@@ -33,12 +49,39 @@ export default function SettingsScreen() {
       updateSettings({
         defaultSalary: parseInt(defaultSalary) || 75000,
         notifications,
+        musicLinks,
+        theme,
       });
-      Alert.alert('Success', 'Settings saved!');
+      Alert.alert('Success', 'Settings saved! Reload the app to see theme changes.');
     } catch (error) {
       Alert.alert('Error', 'Failed to save settings');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpdateMusicLinks = (links: MusicLink[]) => {
+    setMusicLinks(links);
+  };
+
+  const handleExportData = async () => {
+    setExporting(true);
+    try {
+      const data = await analytics.getAnalytics();
+      await exportAnalyticsToCSV(data);
+      if (typeof window !== 'undefined' && window.alert) {
+        window.alert('Analytics exported successfully!');
+      } else {
+        Alert.alert('Success', 'Analytics exported successfully!');
+      }
+    } catch (error) {
+      if (typeof window !== 'undefined' && window.alert) {
+        window.alert('Failed to export analytics');
+      } else {
+        Alert.alert('Error', 'Failed to export analytics');
+      }
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -163,6 +206,60 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Appearance</Text>
+          <View style={styles.card}>
+            <View style={styles.themeRow}>
+              <TouchableOpacity
+                style={[
+                  styles.themeOption,
+                  theme === 'dark' && styles.themeOptionSelected
+                ]}
+                onPress={() => setTheme('dark')}
+              >
+                <Ionicons
+                  name="moon"
+                  size={24}
+                  color={theme === 'dark' ? '#e94560' : '#8b8b8b'}
+                />
+                <Text style={[
+                  styles.themeLabel,
+                  theme === 'dark' && styles.themeLabelSelected
+                ]}>
+                  Dark Mode
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.themeOption,
+                  theme === 'light' && styles.themeOptionSelected
+                ]}
+                onPress={() => setTheme('light')}
+              >
+                <Ionicons
+                  name="sunny"
+                  size={24}
+                  color={theme === 'light' ? '#e94560' : '#8b8b8b'}
+                />
+                <Text style={[
+                  styles.themeLabel,
+                  theme === 'light' && styles.themeLabelSelected
+                ]}>
+                  Light Mode
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Focus Music</Text>
+          <View style={styles.card}>
+            <MusicLinksManager musicLinks={musicLinks} onUpdate={handleUpdateMusicLinks} />
+          </View>
+        </View>
+
         <TouchableOpacity
           style={[styles.saveButton, saving && styles.saveButtonDisabled]}
           onPress={handleSaveSettings}
@@ -173,6 +270,34 @@ export default function SettingsScreen() {
             {saving ? 'Saving...' : 'Save Settings'}
           </Text>
         </TouchableOpacity>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Session History</Text>
+            <TouchableOpacity onPress={() => setShowHistory(!showHistory)}>
+              <Ionicons
+                name={showHistory ? "chevron-up" : "chevron-down"}
+                size={20}
+                color="#8b8b8b"
+              />
+            </TouchableOpacity>
+          </View>
+          {showHistory && <SessionHistoryCalendar />}
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Data Management</Text>
+          <TouchableOpacity
+            style={[styles.exportButton, exporting && styles.exportButtonDisabled]}
+            onPress={handleExportData}
+            disabled={exporting}
+          >
+            <Ionicons name="download-outline" size={24} color="#2d6a4f" />
+            <Text style={styles.exportButtonText}>
+              {exporting ? 'Exporting...' : 'Export Analytics to CSV'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About</Text>
@@ -207,10 +332,10 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#16213e',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -225,25 +350,30 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
   },
   section: {
     marginBottom: 24,
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#8b8b8b',
-    marginBottom: 12,
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   profileRow: {
     flexDirection: 'row',
@@ -253,7 +383,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#0f3460',
+    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -264,12 +394,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   profileEmail: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   settingRow: {
     flexDirection: 'row',
@@ -282,34 +412,34 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     fontSize: 16,
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   settingDescription: {
     fontSize: 12,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   salaryInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0f3460',
+    backgroundColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
   },
   dollarSign: {
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     fontSize: 16,
     marginRight: 4,
   },
   input: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     padding: 8,
     width: 80,
     textAlign: 'right',
   },
   saveButton: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: colors.success,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -334,16 +464,60 @@ const styles = StyleSheet.create({
   },
   aboutLabel: {
     fontSize: 16,
-    color: '#fff',
+    color: colors.text,
   },
   aboutValue: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   divider: {
     height: 1,
-    backgroundColor: '#0f3460',
+    backgroundColor: colors.border,
     marginVertical: 8,
+  },
+  themeRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  themeOption: {
+    flex: 1,
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: colors.background,
+    borderWidth: 2,
+    borderColor: 'transparent',
+    gap: 8,
+  },
+  themeOptionSelected: {
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(233, 69, 96, 0.1)',
+  },
+  themeLabel: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    fontWeight: '600',
+  },
+  themeLabelSelected: {
+    color: colors.text,
+  },
+  exportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.success,
+    gap: 8,
+  },
+  exportButtonDisabled: {
+    opacity: 0.6,
+  },
+  exportButtonText: {
+    color: colors.success,
+    fontSize: 16,
+    fontWeight: '600',
   },
   clearAnalyticsButton: {
     flexDirection: 'row',
@@ -352,12 +526,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#8b8b8b',
+    borderColor: colors.textSecondary,
     marginBottom: 16,
     gap: 8,
   },
   clearAnalyticsText: {
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -368,18 +542,18 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#e94560',
+    borderColor: colors.primary,
     marginBottom: 24,
     gap: 8,
   },
   signOutText: {
-    color: '#e94560',
+    color: colors.primary,
     fontSize: 18,
     fontWeight: '600',
   },
   footer: {
     textAlign: 'center',
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     fontSize: 12,
     marginTop: 16,
   },

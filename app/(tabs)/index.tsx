@@ -18,16 +18,22 @@ import { TaskCard } from '../../components/TaskCard';
 import { TaskInput } from '../../components/TaskInput';
 import { DailyProgress } from '../../components/DailyProgress';
 import { FocusTimer } from '../../components/FocusTimer';
-import { MAX_DAILY_TASKS, FocusPresetType, FOCUS_PRESETS } from '../../types';
+import { TaskEditModal } from '../../components/TaskEditModal';
+import { MAX_DAILY_TASKS, FocusPresetType, FOCUS_PRESETS, Task } from '../../types';
 import { useKeyboardShortcuts } from '../../hooks/useKeyboardShortcuts';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
 
 export default function TasksScreen() {
-  const { tasks, loading, canAddTask, completedCount, addTask, completeTask, uncompleteTask, deleteTask } = useTasks();
+  const { tasks, loading, canAddTask, completedCount, addTask, completeTask, uncompleteTask, deleteTask, updateTask } = useTasks();
   const { user } = useAuth();
   const { startSession, session, isActive, skipBreak, endSession } = useFocus();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [showPresetModal, setShowPresetModal] = useState(false);
   const [showTimerModal, setShowTimerModal] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleAddTask = async (title: string) => {
     try {
@@ -172,12 +178,15 @@ export default function TasksScreen() {
           </View>
         ) : (
           <View style={styles.taskList}>
-            {tasks.map((task) => (
+            {tasks.map((task, index) => (
               <TaskCard
                 key={task.id}
                 task={task}
+                priorityIndex={index}
                 onComplete={() => handleCompleteTask(task.id, task.completed)}
                 onDelete={() => handleDeleteTask(task.id)}
+                onEdit={() => setEditingTask(task)}
+                onUpdate={updateTask}
                 isFocusing={session?.linkedTaskId === task.id && session?.state === 'working'}
               />
             ))}
@@ -271,14 +280,24 @@ export default function TasksScreen() {
         visible={showTimerModal}
         onClose={() => setShowTimerModal(false)}
       />
+
+      {/* Task Edit Modal */}
+      {editingTask && (
+        <TaskEditModal
+          visible={true}
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={updateTask}
+        />
+      )}
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#16213e',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -293,12 +312,12 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   date: {
     fontSize: 16,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   loader: {
     marginTop: 40,
@@ -318,12 +337,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 8,
   },
   emptyText: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   fabButton: {
@@ -333,7 +352,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#e94560',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
@@ -343,7 +362,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
   },
   fabButtonActive: {
-    backgroundColor: '#2d6a4f',
+    backgroundColor: colors.success,
   },
   modalOverlay: {
     flex: 1,
@@ -352,13 +371,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   presetModal: {
-    backgroundColor: '#16213e',
+    backgroundColor: colors.background,
     borderRadius: 24,
     padding: 24,
     width: '90%',
     maxWidth: 400,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -369,33 +388,33 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
   },
   presetOption: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: 20,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
   },
   presetName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   presetDetails: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   sectionLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 12,
@@ -407,21 +426,21 @@ const styles = StyleSheet.create({
   taskOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 12,
     padding: 12,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
     gap: 12,
   },
   taskOptionSelected: {
-    borderColor: '#e94560',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(233, 69, 96, 0.1)',
   },
   taskOptionText: {
     flex: 1,
     fontSize: 14,
-    color: '#fff',
+    color: colors.text,
   },
 });

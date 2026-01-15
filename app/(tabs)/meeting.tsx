@@ -3,9 +3,13 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MeetingCalculator } from '../../components/MeetingCalculator';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
+import { useThemedStyles } from '../../hooks/useThemedStyles';
 
 export default function MeetingScreen() {
   const { user } = useAuth();
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -25,10 +29,10 @@ export default function MeetingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#16213e',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
@@ -43,11 +47,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
 });
