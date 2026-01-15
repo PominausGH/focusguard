@@ -6,9 +6,38 @@ export interface User {
   settings: UserSettings;
 }
 
+export interface MusicLink {
+  id: string;
+  name: string;
+  url: string;
+  type: 'spotify' | 'youtube' | 'other';
+}
+
+export type ThemeMode = 'dark' | 'light';
+
+export interface ThemeColors {
+  primary: string;
+  background: string;
+  cardBackground: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  success: string;
+  danger: string;
+}
+
 export interface UserSettings {
   defaultSalary: number;
   notifications: boolean;
+  musicLinks?: MusicLink[];
+  theme?: ThemeMode;
+  customColors?: Partial<ThemeColors>;
+}
+
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
 }
 
 export interface Task {
@@ -21,6 +50,8 @@ export interface Task {
   date: string; // YYYY-MM-DD for daily grouping
   tags?: string[];
   focusTime?: number; // total minutes spent focusing on this task
+  estimatedPomodoros?: number; // estimated pomodoros needed
+  subtasks?: Subtask[]; // max 3 subtasks
 }
 
 export interface MeetingSession {
@@ -32,11 +63,39 @@ export interface MeetingSession {
   totalCost: number;
 }
 
-export const MAX_DAILY_TASKS = 3;
+export const MAX_DAILY_TASKS = 5;
+export const MAX_SUBTASKS_PER_TASK = 3;
+
+// Priority colors for daily tasks (auto-assigned by order)
+export const PRIORITY_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6']; // Red, Yellow, Green, Blue, Purple
+
+// Theme presets
+export const DARK_THEME: ThemeColors = {
+  primary: '#e94560',
+  background: '#16213e',
+  cardBackground: '#1a1a2e',
+  text: '#fff',
+  textSecondary: '#8b8b8b',
+  border: '#0f3460',
+  success: '#2d6a4f',
+  danger: '#e94560',
+};
+
+export const LIGHT_THEME: ThemeColors = {
+  primary: '#e94560',
+  background: '#f8f9fa',
+  cardBackground: '#ffffff',
+  text: '#1a1a2e',
+  textSecondary: '#6c757d',
+  border: '#dee2e6',
+  success: '#2d6a4f',
+  danger: '#e94560',
+};
 
 export const DEFAULT_SETTINGS: UserSettings = {
   defaultSalary: 75000,
   notifications: true,
+  theme: 'dark',
 };
 
 // Focus Timer Types
