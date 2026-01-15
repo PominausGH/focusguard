@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { analytics, AnalyticsData } from '../services/analytics';
+import { useTheme } from '../contexts/ThemeContext';
+import { useThemedStyles } from '../hooks/useThemedStyles';
 
 export const AnalyticsDashboard: React.FC = () => {
+  const { colors } = useTheme();
+  const styles = useThemedStyles(createStyles);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -53,7 +57,7 @@ export const AnalyticsDashboard: React.FC = () => {
     return null;
   }
 
-  const { meetingSessions, tasksCompleted, pomodoros } = data;
+  const { meetingSessions, tasksCompleted, pomodoros, streaks } = data;
 
   return (
     <View style={styles.container}>
@@ -63,6 +67,24 @@ export const AnalyticsDashboard: React.FC = () => {
           <Ionicons name="refresh-outline" size={20} color="#8b8b8b" />
         </TouchableOpacity>
       </View>
+
+      {/* Streak Display */}
+      {streaks.currentStreak > 0 && (
+        <View style={styles.streakCard}>
+          <View style={styles.streakContent}>
+            <Ionicons name="flame" size={40} color="#f39c12" />
+            <View style={styles.streakText}>
+              <Text style={styles.streakNumber}>{streaks.currentStreak}</Text>
+              <Text style={styles.streakLabel}>Day Streak</Text>
+            </View>
+          </View>
+          {streaks.longestStreak > streaks.currentStreak && (
+            <Text style={styles.streakBest}>
+              Best: {streaks.longestStreak} days 🏆
+            </Text>
+          )}
+        </View>
+      )}
 
       {/* Meeting Stats */}
       <View style={styles.statsGrid}>
@@ -186,7 +208,7 @@ export const AnalyticsDashboard: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     marginBottom: 24,
   },
@@ -199,13 +221,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
   },
   refreshButton: {
     padding: 8,
   },
   loadingText: {
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textAlign: 'center',
     padding: 20,
   },
@@ -218,11 +240,11 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
     alignItems: 'center',
   },
   statIconContainer: {
@@ -231,20 +253,20 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   taskStatsCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#0f3460',
+    borderColor: colors.border,
     marginBottom: 16,
   },
   taskStatRow: {
@@ -263,22 +285,22 @@ const styles = StyleSheet.create({
   taskStatValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
   },
   taskStatLabel: {
     fontSize: 14,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   taskStatDate: {
     fontSize: 12,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
   },
   insightCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.cardBackground,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#e94560',
+    borderColor: colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
@@ -286,7 +308,7 @@ const styles = StyleSheet.create({
   insightText: {
     flex: 1,
     fontSize: 14,
-    color: '#fff',
+    color: colors.text,
     lineHeight: 20,
   },
   pomodoroSection: {
@@ -295,13 +317,45 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   lastSessionText: {
     fontSize: 12,
-    color: '#8b8b8b',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginTop: 8,
+  },
+  streakCard: {
+    backgroundColor: colors.cardBackground,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#f39c12',
+  },
+  streakContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  streakText: {
+    flex: 1,
+  },
+  streakNumber: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#f39c12',
+  },
+  streakLabel: {
+    fontSize: 16,
+    color: colors.text,
+    fontWeight: '600',
+  },
+  streakBest: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 8,
+    textAlign: 'right',
   },
 });

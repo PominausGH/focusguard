@@ -2,6 +2,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ANALYTICS_KEY = '@focusguard_analytics';
 
+export interface SessionHistoryEntry {
+  id: string;
+  date: string; // YYYY-MM-DD
+  preset: 'classic' | 'deepwork' | 'sprint';
+  duration: number; // minutes
+  completedAt: string; // ISO timestamp
+  linkedTaskTitle?: string;
+}
+
 export interface AnalyticsData {
   meetingSessions: {
     totalSessions: number;
@@ -24,6 +33,12 @@ export interface AnalyticsData {
     };
     lastSessionDate: string | null;
   };
+  streaks: {
+    currentStreak: number; // consecutive days with at least 1 pomodoro
+    longestStreak: number;
+    lastActiveDate: string | null; // YYYY-MM-DD
+  };
+  sessionHistory: SessionHistoryEntry[]; // detailed session history
 }
 
 const DEFAULT_ANALYTICS: AnalyticsData = {
@@ -48,6 +63,12 @@ const DEFAULT_ANALYTICS: AnalyticsData = {
     },
     lastSessionDate: null,
   },
+  streaks: {
+    currentStreak: 0,
+    longestStreak: 0,
+    lastActiveDate: null,
+  },
+  sessionHistory: [],
 };
 
 class AnalyticsService {
@@ -59,11 +80,13 @@ class AnalyticsService {
       const stored = await AsyncStorage.getItem(ANALYTICS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Migrate old data that doesn't have pomodoros field
+        // Migrate old data that doesn't have new fields
         this.data = {
           ...DEFAULT_ANALYTICS,
           ...parsed,
           pomodoros: parsed.pomodoros || DEFAULT_ANALYTICS.pomodoros,
+          streaks: parsed.streaks || DEFAULT_ANALYTICS.streaks,
+          sessionHistory: parsed.sessionHistory || DEFAULT_ANALYTICS.sessionHistory,
         };
       }
       this.loaded = true;
@@ -110,12 +133,55 @@ class AnalyticsService {
     await this.save();
   }
 
-  async trackPomodoro(preset: 'classic' | 'deepwork' | 'sprint', durationMinutes: number, taskId?: string): Promise<void> {
+  async trackPomodoro(preset: 'classic' | 'deepwork' | 'sprint', durationMinutes: number, taskTitle?: string): Promise<void> {
     await this.ensureLoaded();
+
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const lastActiveDate = this.data.streaks.lastActiveDate;
+
+    // Update streak
+    if (!lastActiveDate) {
+      // First ever pomodoro
+      this.data.streaks.currentStreak = 1;
+      this.data.streaks.longestStreak = 1;
+    } else if (lastActiveDate === today) {
+      // Already active today, streak continues (no change)
+    } else {
+      // Check if it's consecutive day
+      const lastDate = new Date(lastActiveDate);
+      const todayDate = new Date(today);
+      const diffTime = todayDate.getTime() - lastDate.getTime();
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays === 1) {
+        // Consecutive day
+        this.data.streaks.currentStreak += 1;
+        if (this.data.streaks.currentStreak > this.data.streaks.longestStreak) {
+          this.data.streaks.longestStreak = this.data.streaks.currentStreak;
+        }
+      } else {
+        // Streak broken, reset to 1
+        this.data.streaks.currentStreak = 1;
+      }
+    }
+
+    this.data.streaks.lastActiveDate = today;
     this.data.pomodoros.totalCompleted += 1;
     this.data.pomodoros.totalFocusTime += durationMinutes;
     this.data.pomodoros.byPreset[preset] += 1;
     this.data.pomodoros.lastSessionDate = new Date().toISOString();
+
+    // Add to session history
+    const sessionEntry: SessionHistoryEntry = {
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      date: today,
+      preset,
+      duration: durationMinutes,
+      completedAt: new Date().toISOString(),
+      linkedTaskTitle: taskTitle,
+    };
+    this.data.sessionHistory.push(sessionEntry);
+
     await this.save();
   }
 
