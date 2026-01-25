@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { AuthProvider } from '../contexts/AuthContext';
@@ -7,8 +8,13 @@ import { ThemeProvider } from '../contexts/ThemeContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { BreakOverlay } from '../components/BreakOverlay';
 import { View, StyleSheet } from 'react-native';
+import { initSentry } from '../services/sentry';
 
 export default function RootLayout() {
+  // Initialize Sentry on app start
+  useEffect(() => {
+    initSentry();
+  }, []);
   return (
     <ErrorBoundary>
       <AuthProvider>

@@ -1,0 +1,2 @@
+# Run prettier on staged files
+npx lint-staged

@@ -1,0 +1,58 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build web app
+        run: npx expo export --platform web
+
+      - name: Deploy to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: 'dist/*'
+          target: ${{ secrets.VPS_DEPLOY_PATH }}
+          strip_components: 1
+
+      - name: Restart web server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd ${{ secrets.VPS_DEPLOY_PATH }}
+            # Restart nginx or your web server
+            sudo systemctl reload nginx || true
+            echo "Deployment complete!"
+
+# Required secrets:
+# - VPS_HOST: Your VPS IP address or hostname
+# - VPS_USER: SSH username
+# - VPS_SSH_KEY: Private SSH key for authentication
+# - VPS_DEPLOY_PATH: Path on VPS where files should be deployed (e.g., /var/www/focusguard)

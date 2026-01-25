@@ -1,6 +1,7 @@
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { captureException, addBreadcrumb } from '../services/sentry';
 
 interface Props {
   children: ReactNode;
@@ -11,6 +12,10 @@ interface State {
   error: Error | null;
 }
 
+/**
+ * Error Boundary component that catches React errors and displays a fallback UI.
+ * Integrates with Sentry for error tracking in production.
+ */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -28,7 +33,19 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Log to console in development
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+
+    // Send to Sentry in production
+    captureException(error, {
+      componentStack: errorInfo.componentStack,
+      errorBoundary: true,
+    });
+
+    // Add breadcrumb for debugging
+    addBreadcrumb('error', 'ErrorBoundary caught an error', {
+      errorMessage: error.message,
+    });
   }
 
   handleReset = () => {

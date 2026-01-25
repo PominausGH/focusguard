@@ -1,5 +1,19 @@
+/**
+ * Analytics Service for FocusGuard
+ *
+ * Tracks user engagement metrics including:
+ * - Meeting sessions and costs
+ * - Task completions
+ * - Pomodoro/focus sessions
+ * - Streaks and session history
+ *
+ * All data is stored locally using AsyncStorage.
+ * @module services/analytics
+ */
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+/** Storage key for analytics data */
 const ANALYTICS_KEY = '@focusguard_analytics';
 
 export interface SessionHistoryEntry {
@@ -71,10 +85,18 @@ const DEFAULT_ANALYTICS: AnalyticsData = {
   sessionHistory: [],
 };
 
+/**
+ * Analytics Service class for tracking user engagement.
+ * Singleton instance exported as `analytics`.
+ */
 class AnalyticsService {
   private data: AnalyticsData = DEFAULT_ANALYTICS;
   private loaded: boolean = false;
 
+  /**
+   * Load analytics data from AsyncStorage.
+   * Called automatically when accessing analytics methods.
+   */
   async load(): Promise<void> {
     try {
       const stored = await AsyncStorage.getItem(ANALYTICS_KEY);
@@ -133,7 +155,11 @@ class AnalyticsService {
     await this.save();
   }
 
-  async trackPomodoro(preset: 'classic' | 'deepwork' | 'sprint', durationMinutes: number, taskTitle?: string): Promise<void> {
+  async trackPomodoro(
+    preset: 'classic' | 'deepwork' | 'sprint',
+    durationMinutes: number,
+    taskTitle?: string
+  ): Promise<void> {
     await this.ensureLoaded();
 
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
@@ -191,7 +217,8 @@ class AnalyticsService {
   }
 
   async reset(): Promise<void> {
-    this.data = DEFAULT_ANALYTICS;
+    this.data = JSON.parse(JSON.stringify(DEFAULT_ANALYTICS));
+    this.loaded = true;
     await this.save();
   }
 }

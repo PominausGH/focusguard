@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  Share,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { analytics } from '../services/analytics';
 
@@ -30,12 +22,12 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
   }, [defaultSalary]);
 
   // Cost per second = (attendees * salary) / (2080 hours/year * 60 minutes * 60 seconds)
-  const costPerSecond = (parseInt(attendees) || 0) * (parseInt(salary) || 0) / (2080 * 3600);
+  const costPerSecond = ((parseInt(attendees) || 0) * (parseInt(salary) || 0)) / (2080 * 3600);
 
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setElapsedSeconds(prev => {
+        setElapsedSeconds((prev) => {
           const newSeconds = prev + 1;
           setTotalCost(costPerSecond * newSeconds);
           return newSeconds;
@@ -88,7 +80,7 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
 
     try {
       // Check if Share API is available (mobile devices)
-      if (typeof navigator !== 'undefined' && navigator.share) {
+      if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
         await Share.share({ message });
         await analytics.trackMeetingShare();
       } else {
@@ -180,14 +172,8 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
           style={[styles.button, isRunning ? styles.stopButton : styles.startButton]}
           onPress={handleStartStop}
         >
-          <Ionicons
-            name={isRunning ? 'stop' : 'play'}
-            size={24}
-            color="#fff"
-          />
-          <Text style={styles.buttonText}>
-            {isRunning ? 'Stop' : 'Start'}
-          </Text>
+          <Ionicons name={isRunning ? 'stop' : 'play'} size={24} color="#fff" />
+          <Text style={styles.buttonText}>{isRunning ? 'Stop' : 'Start'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -213,8 +199,8 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
           {parseInt(attendees) >= 5
             ? '📊 Meetings with 5+ people are 33% less productive'
             : parseInt(attendees) >= 3
-            ? '⏰ The average meeting runs 25% longer than scheduled'
-            : '💡 Two-person meetings are the most efficient'}
+              ? '⏰ The average meeting runs 25% longer than scheduled'
+              : '💡 Two-person meetings are the most efficient'}
         </Text>
       </View>
     </View>
