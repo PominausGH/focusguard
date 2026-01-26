@@ -164,15 +164,23 @@ const toTask = (t: TaskResponse): Task => ({
 
 export const tasksApi = {
   async getToday(): Promise<ApiResponse<Task[]>> {
-    const response = await request<TaskResponse[]>('/tasks');
+    // Send local date to avoid timezone issues
+    const today = new Date();
+    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+    const response = await request<TaskResponse[]>(`/tasks?date=${localDate}`);
     if (response.error) return { error: response.error };
     return { data: response.data?.map(toTask) };
   },
 
   async create(title: string): Promise<ApiResponse<Task>> {
+    // Send local date to avoid timezone issues
+    const today = new Date();
+    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
     const response = await request<TaskResponse>('/tasks', {
       method: 'POST',
-      body: JSON.stringify({ title }),
+      body: JSON.stringify({ title, date: localDate }),
     });
     if (response.error) return { error: response.error };
     return { data: response.data ? toTask(response.data) : undefined };
