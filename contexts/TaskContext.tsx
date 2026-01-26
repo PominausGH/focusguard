@@ -4,6 +4,10 @@ import { format, startOfDay } from 'date-fns';
 import { Task, MAX_DAILY_TASKS } from '../types';
 import { useAuth } from './AuthContext';
 import { analytics } from '../services/analytics';
+import { tasksApi } from '../services/api';
+
+// Demo mode - set to false to use API backend
+const DEMO_MODE = false;
 
 // Simple ID generator that works on web
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -43,19 +47,23 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   useEffect(() => {
     if (user) {
-      loadTasks();
+      if (DEMO_MODE) {
+        loadTasksLocal();
+      } else {
+        loadTasksApi();
+      }
     } else {
       setAllTasks([]);
       setLoading(false);
     }
   }, [user]);
 
-  const loadTasks = async () => {
+  // Demo mode - local storage
+  const loadTasksLocal = async () => {
     try {
       const stored = await AsyncStorage.getItem(TASKS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        // Convert date strings back to Date objects
         const tasksWithDates = parsed.map((task: any) => ({
           ...task,
           createdAt: new Date(task.createdAt),
@@ -70,11 +78,27 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const saveTasks = async (tasksToSave: Task[]) => {
+  const saveTasksLocal = async (tasksToSave: Task[]) => {
     try {
       await AsyncStorage.setItem(TASKS_KEY, JSON.stringify(tasksToSave));
     } catch (error) {
       console.error('Error saving tasks:', error);
+    }
+  };
+
+  // API mode
+  const loadTasksApi = async () => {
+    try {
+      const response = await tasksApi.getToday();
+      if (response.data) {
+        setAllTasks(response.data);
+      } else if (response.error) {
+        console.error('Error loading tasks:', response.error);
+      }
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,57 +108,111 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const addTask = async (title: string) => {
     if (!user || !canAddTask) return;
 
-    const newTask: Task = {
-      id: generateId(),
-      userId: user.uid,
-      title,
-      completed: false,
-      createdAt: new Date(),
-      date: getTodayDateString(),
-    };
-
-    const updated = [...allTasks, newTask];
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const newTask: Task = {
+        id: generateId(),
+        userId: user.uid,
+        title,
+        completed: false,
+        createdAt: new Date(),
+        date: getTodayDateString(),
+      };
+      const updated = [...allTasks, newTask];
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.create(title);
+      if (response.data) {
+        setAllTasks((prev) => [...prev, response.data!]);
+      } else if (response.error) {
+        console.error('Error adding task:', response.error);
+        throw new Error(response.error);
+      }
+    }
   };
 
   const completeTask = async (taskId: string) => {
-    const updated = allTasks.map((t) =>
-      t.id === taskId ? { ...t, completed: true, completedAt: new Date() } : t
-    );
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const updated = allTasks.map((t) =>
+        t.id === taskId ? { ...t, completed: true, completedAt: new Date() } : t
+      );
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.complete(taskId);
+      if (response.data) {
+        setAllTasks((prev) => prev.map((t) => (t.id === taskId ? response.data! : t)));
+      } else if (response.error) {
+        console.error('Error completing task:', response.error);
+      }
+    }
 
     // Track task completion in analytics
     await analytics.trackTaskCompleted();
   };
 
   const uncompleteTask = async (taskId: string) => {
-    const updated = allTasks.map((t) =>
-      t.id === taskId ? { ...t, completed: false, completedAt: undefined } : t
-    );
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const updated = allTasks.map((t) =>
+        t.id === taskId ? { ...t, completed: false, completedAt: undefined } : t
+      );
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.uncomplete(taskId);
+      if (response.data) {
+        setAllTasks((prev) => prev.map((t) => (t.id === taskId ? response.data! : t)));
+      } else if (response.error) {
+        console.error('Error uncompleting task:', response.error);
+      }
+    }
   };
 
   const deleteTask = async (taskId: string) => {
-    const updated = allTasks.filter((t) => t.id !== taskId);
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const updated = allTasks.filter((t) => t.id !== taskId);
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.delete(taskId);
+      if (!response.error) {
+        setAllTasks((prev) => prev.filter((t) => t.id !== taskId));
+      } else {
+        console.error('Error deleting task:', response.error);
+      }
+    }
   };
 
   const updateTask = async (task: Task) => {
-    const updated = allTasks.map((t) => (t.id === task.id ? task : t));
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const updated = allTasks.map((t) => (t.id === task.id ? task : t));
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.update(task.id, task);
+      if (response.data) {
+        setAllTasks((prev) => prev.map((t) => (t.id === task.id ? response.data! : t)));
+      } else if (response.error) {
+        console.error('Error updating task:', response.error);
+      }
+    }
   };
 
   const addFocusTime = async (taskId: string, minutes: number) => {
-    const updated = allTasks.map((t) =>
-      t.id === taskId ? { ...t, focusTime: (t.focusTime || 0) + minutes } : t
-    );
-    setAllTasks(updated);
-    await saveTasks(updated);
+    if (DEMO_MODE) {
+      const updated = allTasks.map((t) =>
+        t.id === taskId ? { ...t, focusTime: (t.focusTime || 0) + minutes } : t
+      );
+      setAllTasks(updated);
+      await saveTasksLocal(updated);
+    } else {
+      const response = await tasksApi.addFocusTime(taskId, minutes);
+      if (response.data) {
+        setAllTasks((prev) => prev.map((t) => (t.id === taskId ? response.data! : t)));
+      } else if (response.error) {
+        console.error('Error adding focus time:', response.error);
+      }
+    }
   };
 
   return (

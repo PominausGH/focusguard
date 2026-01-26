@@ -1,14 +1,17 @@
 version: '3.8'
 
 services:
-  focusguard:
+  # Frontend (React Native Web)
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: focusguard
+    container_name: focusshield-frontend
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3010:80"  # Only expose to localhost, nginx will proxy
+      - "127.0.0.1:3010:80"
+    depends_on:
+      - api
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
       interval: 30s
@@ -16,4 +19,50 @@ services:
       retries: 3
       start_period: 10s
 
-# nginx on the host will reverse proxy to localhost:3010
+  # Backend API
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: focusshield-api
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3011:3000"
+    environment:
+      - DATABASE_URL=postgresql://focusshield:${DB_PASSWORD:-focusshield123}@db:5432/focusshield
+      - JWT_SECRET=${JWT_SECRET:-change-this-in-production-use-long-random-string}
+      - JWT_EXPIRES_IN=7d
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: focusshield-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=focusshield
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-focusshield123}
+      - POSTGRES_DB=focusshield
+    volumes:
+      - focusshield_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U focusshield"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  focusshield_data:
+
+# nginx on the host will reverse proxy:
+# - focusshield.app -> frontend (localhost:3010)
+# - focusshield.app/api -> api (localhost:3011)

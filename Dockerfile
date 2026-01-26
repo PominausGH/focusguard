@@ -24,6 +24,9 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Copy built files from builder stage
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Copy landing page and static files
+COPY --from=builder /app/public/landing.html /usr/share/nginx/html/landing.html
+
 # Expose port 80
 EXPOSE 80
 

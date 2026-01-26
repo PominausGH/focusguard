@@ -7,9 +7,10 @@ import {
   validateDisplayName,
   sanitizeInput,
 } from '../services/validation';
+import { authApi, setToken, getToken, clearToken } from '../services/api';
 
-// Demo mode - set to true to bypass Firebase
-const DEMO_MODE = true;
+// Demo mode - set to false to use API backend
+const DEMO_MODE = false;
 
 interface AuthContextType {
   user: User | null;
@@ -29,9 +30,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadDemoUser();
+    if (DEMO_MODE) {
+      loadDemoUser();
+    } else {
+      loadUser();
+    }
   }, []);
 
+  // Demo mode functions (local storage only)
   const loadDemoUser = async () => {
     try {
       const stored = await AsyncStorage.getItem(DEMO_USER_KEY);
@@ -51,6 +57,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       await AsyncStorage.setItem(DEMO_USER_KEY, JSON.stringify(userData));
     } catch (error) {
       console.error('Error saving user:', error);
+    }
+  };
+
+  // API mode functions
+  const loadUser = async () => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      const response = await authApi.getMe();
+      if (response.data) {
+        const userData: User = {
+          uid: response.data.id,
+          email: response.data.email,
+          displayName: response.data.displayName,
+          createdAt: new Date(response.data.createdAt),
+          settings: response.data.settings || DEFAULT_SETTINGS,
+        };
+        setUser(userData);
+      } else {
+        // Token invalid, clear it
+        await clearToken();
+      }
+    } catch (error) {
+      console.error('Error loading user:', error);
+      await clearToken();
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,15 +114,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const sanitizedEmail = sanitizeInput(email.toLowerCase().trim());
     const sanitizedName = sanitizeInput(displayName.trim());
 
-    const userData: User = {
-      uid: 'demo_' + Date.now(),
-      email: sanitizedEmail,
-      displayName: sanitizedName,
-      createdAt: new Date(),
-      settings: DEFAULT_SETTINGS,
-    };
-    setUser(userData);
-    await saveDemoUser(userData);
+    if (DEMO_MODE) {
+      // Demo mode - local storage only
+      const userData: User = {
+        uid: 'demo_' + Date.now(),
+        email: sanitizedEmail,
+        displayName: sanitizedName,
+        createdAt: new Date(),
+        settings: DEFAULT_SETTINGS,
+      };
+      setUser(userData);
+      await saveDemoUser(userData);
+    } else {
+      // API mode
+      const response = await authApi.register(sanitizedEmail, password, sanitizedName);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (response.data) {
+        await setToken(response.data.token);
+        const userData: User = {
+          uid: response.data.user.id,
+          email: response.data.user.email,
+          displayName: response.data.user.displayName,
+          createdAt: new Date(response.data.user.createdAt),
+          settings: response.data.user.settings || DEFAULT_SETTINGS,
+        };
+        setUser(userData);
+      }
+    }
   };
 
   const signIn = async (email: string, password: string) => {
@@ -100,35 +159,69 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error('Password is required');
     }
 
-    // In demo mode, just create/restore user
-    const stored = await AsyncStorage.getItem(DEMO_USER_KEY);
-    if (stored) {
-      const storedUser = JSON.parse(stored);
-      // Check if email matches (case insensitive)
-      if (storedUser.email.toLowerCase() === email.toLowerCase().trim()) {
-        setUser(storedUser);
+    if (DEMO_MODE) {
+      // Demo mode - check local storage
+      const stored = await AsyncStorage.getItem(DEMO_USER_KEY);
+      if (stored) {
+        const storedUser = JSON.parse(stored);
+        if (storedUser.email.toLowerCase() === email.toLowerCase().trim()) {
+          setUser(storedUser);
+        } else {
+          throw new Error('No account found with this email. Please sign up first.');
+        }
       } else {
-        throw new Error('No account found with this email. Please sign up first.');
+        throw new Error('No account found. Please sign up first.');
       }
     } else {
-      throw new Error('No account found. Please sign up first.');
+      // API mode
+      const response = await authApi.login(email.toLowerCase().trim(), password);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (response.data) {
+        await setToken(response.data.token);
+        const userData: User = {
+          uid: response.data.user.id,
+          email: response.data.user.email,
+          displayName: response.data.user.displayName,
+          createdAt: new Date(response.data.user.createdAt),
+          settings: response.data.user.settings || DEFAULT_SETTINGS,
+        };
+        setUser(userData);
+      }
     }
   };
 
   const signOut = async () => {
     setUser(null);
-    await AsyncStorage.removeItem(DEMO_USER_KEY);
-    await AsyncStorage.removeItem('@focusshield_tasks');
+    if (DEMO_MODE) {
+      await AsyncStorage.removeItem(DEMO_USER_KEY);
+      await AsyncStorage.removeItem('@focusshield_tasks');
+    } else {
+      await clearToken();
+    }
   };
 
-  const updateSettings = (settings: Partial<User['settings']>) => {
-    if (user) {
-      const updatedUser = {
-        ...user,
-        settings: { ...user.settings, ...settings },
-      };
-      setUser(updatedUser);
-      saveDemoUser(updatedUser);
+  const updateSettings = async (settings: Partial<User['settings']>) => {
+    if (!user) return;
+
+    const updatedUser = {
+      ...user,
+      settings: { ...user.settings, ...settings },
+    };
+    setUser(updatedUser);
+
+    if (DEMO_MODE) {
+      await saveDemoUser(updatedUser);
+    } else {
+      // Update settings on API
+      const response = await authApi.updateSettings(settings);
+      if (response.error) {
+        console.error('Failed to sync settings:', response.error);
+        // Keep local changes anyway for better UX
+      }
     }
   };
 
