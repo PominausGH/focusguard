@@ -149,13 +149,13 @@ export interface TaskResponse {
 
 // Convert API response to frontend Task type
 const toTask = (t: TaskResponse): Task => ({
-  id: t.id,
-  userId: t.user_id,
+  id: String(t.id),
+  userId: String(t.user_id),
   title: t.title,
   completed: t.completed,
   createdAt: new Date(t.created_at),
   completedAt: t.completed_at ? new Date(t.completed_at) : undefined,
-  date: t.date,
+  date: t.date.split('T')[0], // Extract YYYY-MM-DD from ISO string
   tags: t.tags || undefined,
   focusTime: t.focus_time || undefined,
   estimatedPomodoros: t.estimated_pomodoros || undefined,
