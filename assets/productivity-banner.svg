@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f14"/>
+      <stop offset="100%" style="stop-color:#1a1a24"/>
+    </linearGradient>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e94560"/>
+      <stop offset="100%" style="stop-color:#c23a52"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="400" fill="url(#bgGrad)"/>
+  
+  <!-- Subtle grid pattern -->
+  <g opacity="0.03">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-width="1"/>
+    </pattern>
+    <rect width="1200" height="400" fill="url(#grid)"/>
+  </g>
+  
+  <!-- Accent glow orb -->
+  <ellipse cx="400" cy="200" rx="200" ry="180" fill="#e94560" opacity="0.04"/>
+  
+  <!-- Shield Icon -->
+  <g transform="translate(320, 100)" filter="url(#glow)">
+    <path d="M80 0 L160 30 L160 90 C160 150 80 200 80 200 C80 200 0 150 0 90 L0 30 Z" 
+          fill="url(#shieldGrad)" opacity="0.95"/>
+    <!-- Inner shield detail -->
+    <path d="M80 20 L140 42 L140 88 C140 135 80 175 80 175 C80 175 20 135 20 88 L20 42 Z" 
+          fill="none" stroke="#ffffff" stroke-width="2" opacity="0.2"/>
+    <!-- Checkmark inside shield -->
+    <path d="M55 100 L72 118 L108 75" fill="none" stroke="#ffffff" stroke-width="8" 
+          stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+  </g>
+  
+  <!-- Task Checkboxes -->
+  <g transform="translate(580, 80)">
+    <!-- Checkbox 1 - Checked -->
+    <g transform="translate(0, 0)" filter="url(#softGlow)">
+      <rect x="0" y="0" width="36" height="36" rx="8" fill="#e94560"/>
+      <path d="M10 18 L15 24 L26 12" fill="none" stroke="#ffffff" stroke-width="3" 
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="50" y="12" width="180" height="12" rx="6" fill="#2a2a36"/>
+    </g>
+    
+    <!-- Checkbox 2 - Checked -->
+    <g transform="translate(0, 56)" filter="url(#softGlow)">
+      <rect x="0" y="0" width="36" height="36" rx="8" fill="#e94560"/>
+      <path d="M10 18 L15 24 L26 12" fill="none" stroke="#ffffff" stroke-width="3" 
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="50" y="12" width="140" height="12" rx="6" fill="#2a2a36"/>
+    </g>
+    
+    <!-- Checkbox 3 - Checked -->
+    <g transform="translate(0, 112)" filter="url(#softGlow)">
+      <rect x="0" y="0" width="36" height="36" rx="8" fill="#e94560"/>
+      <path d="M10 18 L15 24 L26 12" fill="none" stroke="#ffffff" stroke-width="3" 
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="50" y="12" width="200" height="12" rx="6" fill="#2a2a36"/>
+    </g>
+    
+    <!-- Checkbox 4 - Unchecked -->
+    <g transform="translate(0, 168)">
+      <rect x="0" y="0" width="36" height="36" rx="8" fill="none" stroke="#3a3a48" stroke-width="2"/>
+      <rect x="50" y="12" width="160" height="12" rx="6" fill="#2a2a36"/>
+    </g>
+    
+    <!-- Checkbox 5 - Unchecked -->
+    <g transform="translate(0, 224)">
+      <rect x="0" y="0" width="36" height="36" rx="8" fill="none" stroke="#3a3a48" stroke-width="2"/>
+      <rect x="50" y="12" width="120" height="12" rx="6" fill="#2a2a36"/>
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="950" cy="80" r="4" fill="#e94560" opacity="0.6"/>
+  <circle cx="1000" cy="120" r="3" fill="#e94560" opacity="0.4"/>
+  <circle cx="920" cy="150" r="2" fill="#e94560" opacity="0.3"/>
+  <circle cx="1050" cy="300" r="5" fill="#e94560" opacity="0.5"/>
+  <circle cx="150" cy="320" r="3" fill="#e94560" opacity="0.3"/>
+  <circle cx="100" cy="100" r="2" fill="#e94560" opacity="0.25"/>
+  
+  <!-- Subtle line accents -->
+  <line x1="860" y1="180" x2="920" y2="180" stroke="#e94560" stroke-width="2" opacity="0.3" stroke-linecap="round"/>
+  <line x1="880" y1="200" x2="960" y2="200" stroke="#e94560" stroke-width="2" opacity="0.2" stroke-linecap="round"/>
+</svg>
