@@ -1,10 +1,11 @@
-# FocusGuard
+# FocusShield
 
 A productivity mobile app built with React Native and Expo that helps you manage daily tasks and track meeting costs.
 
 ## Features
 
 ### Task Management
+
 - Daily task list with configurable limit (default: 5 tasks)
 - Priority colors assigned by task order
 - Check/uncheck tasks for completion
@@ -13,6 +14,7 @@ A productivity mobile app built with React Native and Expo that helps you manage
 - Task history tracking
 
 ### Meeting Cost Calculator
+
 - Real-time cost calculation based on attendee count and average salary
 - Start/Stop/Reset controls
 - Per-minute and per-hour rate display
@@ -20,6 +22,7 @@ A productivity mobile app built with React Native and Expo that helps you manage
 - Fun facts about meeting costs
 
 ### Focus Timer
+
 - Pomodoro-style timer with multiple presets:
   - Classic (25/5/15 min)
   - Deep Work (50/10/20 min)
@@ -29,6 +32,7 @@ A productivity mobile app built with React Native and Expo that helps you manage
 - Session history calendar
 
 ### Additional Features
+
 - Dark/Light theme support
 - Ambient sounds for focus sessions
 - Music playlist links (Spotify/YouTube)
@@ -46,6 +50,7 @@ A productivity mobile app built with React Native and Expo that helps you manage
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Expo CLI
@@ -54,8 +59,8 @@ A productivity mobile app built with React Native and Expo that helps you manage
 
 ```bash
 # Clone the repository
-git clone https://github.com/PominausGH/focusguard.git
-cd focusguard
+git clone https://github.com/PominausGH/focusshield.git
+cd focusshield
 
 # Install dependencies
 npm install
@@ -74,7 +79,7 @@ npx expo start
 ## Project Structure
 
 ```
-focusguard/
+focusshield/
 ├── app/                    # Screens (Expo Router)
 │   ├── (tabs)/            # Tab navigation
 │   │   ├── index.tsx      # Tasks screen
@@ -95,9 +100,9 @@ focusguard/
 Key constants in `types/index.ts`:
 
 ```typescript
-MAX_DAILY_TASKS = 5        // Maximum tasks per day
-MAX_SUBTASKS_PER_TASK = 3  // Subtasks per task
-DEFAULT_SALARY = 75000     // Default salary for meeting calculator
+MAX_DAILY_TASKS = 5; // Maximum tasks per day
+MAX_SUBTASKS_PER_TASK = 3; // Subtasks per task
+DEFAULT_SALARY = 75000; // Default salary for meeting calculator
 ```
 
 ## License

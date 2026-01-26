@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User, DEFAULT_SETTINGS } from '../types';
-import { validateEmail, validatePassword, validateDisplayName, sanitizeInput } from '../services/validation';
+import {
+  validateEmail,
+  validatePassword,
+  validateDisplayName,
+  sanitizeInput,
+} from '../services/validation';
 
 // Demo mode - set to true to bypass Firebase
 const DEMO_MODE = true;
@@ -17,7 +22,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const DEMO_USER_KEY = '@focusguard_demo_user';
+const DEMO_USER_KEY = '@focusshield_demo_user';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -113,7 +118,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const signOut = async () => {
     setUser(null);
     await AsyncStorage.removeItem(DEMO_USER_KEY);
-    await AsyncStorage.removeItem('@focusguard_tasks');
+    await AsyncStorage.removeItem('@focusshield_tasks');
   };
 
   const updateSettings = (settings: Partial<User['settings']>) => {

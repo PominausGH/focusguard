@@ -1,5 +1,5 @@
 /**
- * Analytics Service for FocusGuard
+ * Analytics Service for FocusShield
  *
  * Tracks user engagement metrics including:
  * - Meeting sessions and costs
@@ -14,7 +14,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 /** Storage key for analytics data */
-const ANALYTICS_KEY = '@focusguard_analytics';
+const ANALYTICS_KEY = '@focusshield_analytics';
 
 export interface SessionHistoryEntry {
   id: string;

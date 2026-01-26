@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FocusSession, FocusPresetType, FocusState, FOCUS_PRESETS } from '../types';
 import { analytics } from '../services/analytics';
@@ -15,7 +22,7 @@ interface FocusContextType {
 
 const FocusContext = createContext<FocusContextType | undefined>(undefined);
 
-const FOCUS_SESSION_KEY = '@focusguard_focus_session';
+const FOCUS_SESSION_KEY = '@focusshield_focus_session';
 
 export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [session, setSession] = useState<FocusSession | null>(null);
@@ -139,9 +146,10 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
     const preset = FOCUS_PRESETS[session.mode];
     // Increment session cycle or reset after long break
-    const nextSessionInCycle = session.state === 'longBreak'
-      ? 1
-      : (session.currentSessionInCycle % preset.longBreakAfter) + 1;
+    const nextSessionInCycle =
+      session.state === 'longBreak'
+        ? 1
+        : (session.currentSessionInCycle % preset.longBreakAfter) + 1;
 
     const updatedSession: FocusSession = {
       ...session,

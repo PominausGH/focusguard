@@ -25,9 +25,7 @@ export default function AuthScreen() {
   const { signIn, signUp } = useAuth();
 
   // Calculate password strength for sign up
-  const passwordStrength = isSignUp && password.length > 0
-    ? getPasswordStrength(password)
-    : null;
+  const passwordStrength = isSignUp && password.length > 0 ? getPasswordStrength(password) : null;
 
   const handleAuth = async () => {
     setLoading(true);
@@ -59,7 +57,7 @@ export default function AuthScreen() {
       <View style={styles.content}>
         <View style={styles.logoContainer}>
           <Ionicons name="shield-checkmark" size={80} color="#e94560" />
-          <Text style={styles.title}>FocusGuard</Text>
+          <Text style={styles.title}>FocusShield</Text>
           <Text style={styles.subtitle}>Do less. Achieve more.</Text>
         </View>
 
@@ -94,10 +92,7 @@ export default function AuthScreen() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
             />
-            <TouchableOpacity
-              style={styles.eyeIcon}
-              onPress={() => setShowPassword(!showPassword)}
-            >
+            <TouchableOpacity style={styles.eyeIcon} onPress={() => setShowPassword(!showPassword)}>
               <Ionicons
                 name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                 size={20}
@@ -115,16 +110,18 @@ export default function AuthScreen() {
                     passwordStrength.strength === 'weak' && styles.strengthWeak,
                     passwordStrength.strength === 'medium' && styles.strengthMedium,
                     passwordStrength.strength === 'strong' && styles.strengthStrong,
-                    { width: `${(passwordStrength.score / 5) * 100}%` }
+                    { width: `${(passwordStrength.score / 5) * 100}%` },
                   ]}
                 />
               </View>
-              <Text style={[
-                styles.strengthText,
-                passwordStrength.strength === 'weak' && styles.strengthTextWeak,
-                passwordStrength.strength === 'medium' && styles.strengthTextMedium,
-                passwordStrength.strength === 'strong' && styles.strengthTextStrong,
-              ]}>
+              <Text
+                style={[
+                  styles.strengthText,
+                  passwordStrength.strength === 'weak' && styles.strengthTextWeak,
+                  passwordStrength.strength === 'medium' && styles.strengthTextMedium,
+                  passwordStrength.strength === 'strong' && styles.strengthTextStrong,
+                ]}
+              >
                 {passwordStrength.strength === 'weak' && 'Weak password'}
                 {passwordStrength.strength === 'medium' && 'Medium strength'}
                 {passwordStrength.strength === 'strong' && 'Strong password'}
@@ -149,20 +146,13 @@ export default function AuthScreen() {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>
-                {isSignUp ? 'Create Account' : 'Sign In'}
-              </Text>
+              <Text style={styles.buttonText}>{isSignUp ? 'Create Account' : 'Sign In'}</Text>
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.switchButton}
-            onPress={() => setIsSignUp(!isSignUp)}
-          >
+          <TouchableOpacity style={styles.switchButton} onPress={() => setIsSignUp(!isSignUp)}>
             <Text style={styles.switchText}>
-              {isSignUp
-                ? 'Already have an account? Sign In'
-                : "Don't have an account? Sign Up"}
+              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
             </Text>
           </TouchableOpacity>
         </View>

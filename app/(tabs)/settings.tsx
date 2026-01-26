@@ -28,15 +28,9 @@ export default function SettingsScreen() {
   const [defaultSalary, setDefaultSalary] = useState(
     (user?.settings?.defaultSalary || 75000).toString()
   );
-  const [notifications, setNotifications] = useState(
-    user?.settings?.notifications ?? true
-  );
-  const [musicLinks, setMusicLinks] = useState<MusicLink[]>(
-    user?.settings?.musicLinks || []
-  );
-  const [theme, setTheme] = useState<ThemeMode>(
-    user?.settings?.theme || 'dark'
-  );
+  const [notifications, setNotifications] = useState(user?.settings?.notifications ?? true);
+  const [musicLinks, setMusicLinks] = useState<MusicLink[]>(user?.settings?.musicLinks || []);
+  const [theme, setTheme] = useState<ThemeMode>(user?.settings?.theme || 'dark');
   const [saving, setSaving] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -122,18 +116,14 @@ export default function SettingsScreen() {
         signOut();
       }
     } else {
-      Alert.alert(
-        'Sign Out',
-        'Are you sure you want to sign out?',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Sign Out',
-            style: 'destructive',
-            onPress: signOut,
-          },
-        ]
-      );
+      Alert.alert('Sign Out', 'Are you sure you want to sign out?', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Sign Out',
+          style: 'destructive',
+          onPress: signOut,
+        },
+      ]);
     }
   };
 
@@ -167,9 +157,7 @@ export default function SettingsScreen() {
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
                 <Text style={styles.settingLabel}>Default Salary</Text>
-                <Text style={styles.settingDescription}>
-                  Used as default in meeting calculator
-                </Text>
+                <Text style={styles.settingDescription}>Used as default in meeting calculator</Text>
               </View>
               <View style={styles.salaryInput}>
                 <Text style={styles.dollarSign}>$</Text>
@@ -192,9 +180,7 @@ export default function SettingsScreen() {
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
                 <Text style={styles.settingLabel}>Daily Reminders</Text>
-                <Text style={styles.settingDescription}>
-                  Get reminded to set your 3 tasks
-                </Text>
+                <Text style={styles.settingDescription}>Get reminded to set your 3 tasks</Text>
               </View>
               <Switch
                 value={notifications}
@@ -211,30 +197,17 @@ export default function SettingsScreen() {
           <View style={styles.card}>
             <View style={styles.themeRow}>
               <TouchableOpacity
-                style={[
-                  styles.themeOption,
-                  theme === 'dark' && styles.themeOptionSelected
-                ]}
+                style={[styles.themeOption, theme === 'dark' && styles.themeOptionSelected]}
                 onPress={() => setTheme('dark')}
               >
-                <Ionicons
-                  name="moon"
-                  size={24}
-                  color={theme === 'dark' ? '#e94560' : '#8b8b8b'}
-                />
-                <Text style={[
-                  styles.themeLabel,
-                  theme === 'dark' && styles.themeLabelSelected
-                ]}>
+                <Ionicons name="moon" size={24} color={theme === 'dark' ? '#e94560' : '#8b8b8b'} />
+                <Text style={[styles.themeLabel, theme === 'dark' && styles.themeLabelSelected]}>
                   Dark Mode
                 </Text>
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[
-                  styles.themeOption,
-                  theme === 'light' && styles.themeOptionSelected
-                ]}
+                style={[styles.themeOption, theme === 'light' && styles.themeOptionSelected]}
                 onPress={() => setTheme('light')}
               >
                 <Ionicons
@@ -242,10 +215,7 @@ export default function SettingsScreen() {
                   size={24}
                   color={theme === 'light' ? '#e94560' : '#8b8b8b'}
                 />
-                <Text style={[
-                  styles.themeLabel,
-                  theme === 'light' && styles.themeLabelSelected
-                ]}>
+                <Text style={[styles.themeLabel, theme === 'light' && styles.themeLabelSelected]}>
                   Light Mode
                 </Text>
               </TouchableOpacity>
@@ -266,9 +236,7 @@ export default function SettingsScreen() {
           disabled={saving}
         >
           <Ionicons name="checkmark-circle" size={24} color="#fff" />
-          <Text style={styles.saveButtonText}>
-            {saving ? 'Saving...' : 'Save Settings'}
-          </Text>
+          <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save Settings'}</Text>
         </TouchableOpacity>
 
         <View style={styles.section}>
@@ -276,7 +244,7 @@ export default function SettingsScreen() {
             <Text style={styles.sectionTitle}>Session History</Text>
             <TouchableOpacity onPress={() => setShowHistory(!showHistory)}>
               <Ionicons
-                name={showHistory ? "chevron-up" : "chevron-down"}
+                name={showHistory ? 'chevron-up' : 'chevron-down'}
                 size={20}
                 color="#8b8b8b"
               />
@@ -324,237 +292,236 @@ export default function SettingsScreen() {
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footer}>
-          FocusGuard - The Anti-Productivity Productivity App
-        </Text>
+        <Text style={styles.footer}>FocusShield - The Anti-Productivity Productivity App</Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const createStyles = (colors: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  card: {
-    backgroundColor: colors.cardBackground,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  profileRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 16,
-  },
-  profileInfo: {
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  profileEmail: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  settingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  settingInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  settingLabel: {
-    fontSize: 16,
-    color: colors.text,
-    marginBottom: 4,
-  },
-  settingDescription: {
-    fontSize: 12,
-    color: colors.textSecondary,
-  },
-  salaryInput: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.border,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-  },
-  dollarSign: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    marginRight: 4,
-  },
-  input: {
-    color: colors.text,
-    fontSize: 16,
-    padding: 8,
-    width: 80,
-    textAlign: 'right',
-  },
-  saveButton: {
-    backgroundColor: colors.success,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    marginBottom: 24,
-    gap: 8,
-  },
-  saveButtonDisabled: {
-    opacity: 0.7,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  aboutRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  aboutLabel: {
-    fontSize: 16,
-    color: colors.text,
-  },
-  aboutValue: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: 8,
-  },
-  themeRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  themeOption: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: colors.background,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    gap: 8,
-  },
-  themeOptionSelected: {
-    borderColor: colors.primary,
-    backgroundColor: 'rgba(233, 69, 96, 0.1)',
-  },
-  themeLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    fontWeight: '600',
-  },
-  themeLabelSelected: {
-    color: colors.text,
-  },
-  exportButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.success,
-    gap: 8,
-  },
-  exportButtonDisabled: {
-    opacity: 0.6,
-  },
-  exportButtonText: {
-    color: colors.success,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  clearAnalyticsButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.textSecondary,
-    marginBottom: 16,
-    gap: 8,
-  },
-  clearAnalyticsText: {
-    color: colors.textSecondary,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    marginBottom: 24,
-    gap: 8,
-  },
-  signOutText: {
-    color: colors.primary,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  footer: {
-    textAlign: 'center',
-    color: colors.textSecondary,
-    fontSize: 12,
-    marginTop: 16,
-  },
-});
+const createStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    scrollView: {
+      flex: 1,
+    },
+    content: {
+      padding: 20,
+      paddingBottom: 40,
+    },
+    header: {
+      marginBottom: 24,
+    },
+    title: {
+      fontSize: 28,
+      fontWeight: 'bold',
+      color: colors.text,
+    },
+    section: {
+      marginBottom: 24,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    sectionTitle: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.textSecondary,
+      textTransform: 'uppercase',
+      letterSpacing: 1,
+    },
+    card: {
+      backgroundColor: colors.cardBackground,
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    profileRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    avatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
+    },
+    profileInfo: {
+      flex: 1,
+    },
+    profileName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: colors.text,
+      marginBottom: 4,
+    },
+    profileEmail: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    settingInfo: {
+      flex: 1,
+      marginRight: 16,
+    },
+    settingLabel: {
+      fontSize: 16,
+      color: colors.text,
+      marginBottom: 4,
+    },
+    settingDescription: {
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+    salaryInput: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.border,
+      borderRadius: 8,
+      paddingHorizontal: 12,
+    },
+    dollarSign: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      marginRight: 4,
+    },
+    input: {
+      color: colors.text,
+      fontSize: 16,
+      padding: 8,
+      width: 80,
+      textAlign: 'right',
+    },
+    saveButton: {
+      backgroundColor: colors.success,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 16,
+      marginBottom: 24,
+      gap: 8,
+    },
+    saveButtonDisabled: {
+      opacity: 0.7,
+    },
+    saveButtonText: {
+      color: '#fff',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    aboutRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 8,
+    },
+    aboutLabel: {
+      fontSize: 16,
+      color: colors.text,
+    },
+    aboutValue: {
+      fontSize: 14,
+      color: colors.textSecondary,
+    },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+      marginVertical: 8,
+    },
+    themeRow: {
+      flexDirection: 'row',
+      gap: 12,
+    },
+    themeOption: {
+      flex: 1,
+      alignItems: 'center',
+      padding: 16,
+      borderRadius: 12,
+      backgroundColor: colors.background,
+      borderWidth: 2,
+      borderColor: 'transparent',
+      gap: 8,
+    },
+    themeOptionSelected: {
+      borderColor: colors.primary,
+      backgroundColor: 'rgba(233, 69, 96, 0.1)',
+    },
+    themeLabel: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      fontWeight: '600',
+    },
+    themeLabelSelected: {
+      color: colors.text,
+    },
+    exportButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.success,
+      gap: 8,
+    },
+    exportButtonDisabled: {
+      opacity: 0.6,
+    },
+    exportButtonText: {
+      color: colors.success,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    clearAnalyticsButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.textSecondary,
+      marginBottom: 16,
+      gap: 8,
+    },
+    clearAnalyticsText: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    signOutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 16,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.primary,
+      marginBottom: 24,
+      gap: 8,
+    },
+    signOutText: {
+      color: colors.primary,
+      fontSize: 18,
+      fontWeight: '600',
+    },
+    footer: {
+      textAlign: 'center',
+      color: colors.textSecondary,
+      fontSize: 12,
+      marginTop: 16,
+    },
+  });

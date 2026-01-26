@@ -1,10 +1,10 @@
-# Privacy Policy for FocusGuard
+# Privacy Policy for FocusShield
 
 **Last Updated:** January 26, 2026
 
 ## Introduction
 
-FocusGuard ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+FocusShield ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
 
 ## Information We Collect
 
@@ -26,7 +26,7 @@ FocusGuard ("we", "our", or "us") is committed to protecting your privacy. This 
 
 We use your information to:
 
-- Provide and maintain the FocusGuard service
+- Provide and maintain the FocusShield service
 - Save your tasks and settings across sessions
 - Track your productivity statistics (locally on your device)
 - Improve our application based on anonymous usage patterns
@@ -71,7 +71,7 @@ You have the right to:
 
 ## Children's Privacy
 
-FocusGuard is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
+FocusShield is not intended for children under 13 years of age. We do not knowingly collect personal information from children under 13.
 
 ## Security
 
@@ -93,8 +93,8 @@ We may update this Privacy Policy periodically. We will notify you of any change
 
 If you have questions about this Privacy Policy, please contact us at:
 
-- Email: privacy@focusguard.app
-- GitHub: https://github.com/PominausGH/focusguard
+- Email: privacy@focusshield.app
+- GitHub: https://github.com/PominausGH/focusshield
 
 ## Compliance
 
@@ -107,4 +107,4 @@ This application is designed to comply with:
 
 ---
 
-By using FocusGuard, you agree to this Privacy Policy.
+By using FocusShield, you agree to this Privacy Policy.

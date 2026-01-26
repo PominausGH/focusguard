@@ -1,7 +1,7 @@
 import { Audio } from 'expo-av';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const SOUND_SETTINGS_KEY = '@focusguard_sound_settings';
+const SOUND_SETTINGS_KEY = '@focusshield_sound_settings';
 
 export interface AmbientSound {
   id: string;
@@ -63,7 +63,7 @@ class AmbientSoundService {
       } else {
         // Default settings: all sounds off
         this.settings = {};
-        AMBIENT_SOUNDS.forEach(sound => {
+        AMBIENT_SOUNDS.forEach((sound) => {
           this.settings[sound.id] = { enabled: false, volume: 0.5 };
         });
       }
@@ -91,7 +91,7 @@ class AmbientSoundService {
   async loadSound(soundId: string): Promise<void> {
     if (this.sounds.has(soundId)) return;
 
-    const ambientSound = AMBIENT_SOUNDS.find(s => s.id === soundId);
+    const ambientSound = AMBIENT_SOUNDS.find((s) => s.id === soundId);
     if (!ambientSound) return;
 
     try {

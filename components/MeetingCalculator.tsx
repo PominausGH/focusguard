@@ -76,7 +76,7 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
   const handleShare = async () => {
     const minutes = Math.floor(elapsedSeconds / 60);
     const seconds = elapsedSeconds % 60;
-    const message = `This ${minutes}:${seconds.toString().padStart(2, '0')} meeting with ${attendees} people just cost $${totalCost.toFixed(2)}! 💸\n\nTracked with FocusGuard - the anti-productivity productivity app.`;
+    const message = `This ${minutes}:${seconds.toString().padStart(2, '0')} meeting with ${attendees} people just cost $${totalCost.toFixed(2)}! 💸\n\nTracked with FocusShield - the anti-productivity productivity app.`;
 
     try {
       // Check if Share API is available (mobile devices)

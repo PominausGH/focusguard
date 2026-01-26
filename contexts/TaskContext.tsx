@@ -8,7 +8,7 @@ import { analytics } from '../services/analytics';
 // Simple ID generator that works on web
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-const TASKS_KEY = '@focusguard_tasks';
+const TASKS_KEY = '@focusshield_tasks';
 
 // Get today's date in local timezone as YYYY-MM-DD
 const getTodayDateString = (): string => {
@@ -38,7 +38,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Filter to today's tasks only (memoized to prevent unnecessary re-renders)
   const todayStr = getTodayDateString();
   const tasks = useMemo(() => {
-    return allTasks.filter(t => t.date === todayStr);
+    return allTasks.filter((t) => t.date === todayStr);
   }, [allTasks, todayStr]);
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const canAddTask = tasks.length < MAX_DAILY_TASKS;
-  const completedCount = tasks.filter(t => t.completed).length;
+  const completedCount = tasks.filter((t) => t.completed).length;
 
   const addTask = async (title: string) => {
     if (!user || !canAddTask) return;
@@ -99,7 +99,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const completeTask = async (taskId: string) => {
-    const updated = allTasks.map(t =>
+    const updated = allTasks.map((t) =>
       t.id === taskId ? { ...t, completed: true, completedAt: new Date() } : t
     );
     setAllTasks(updated);
@@ -110,7 +110,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const uncompleteTask = async (taskId: string) => {
-    const updated = allTasks.map(t =>
+    const updated = allTasks.map((t) =>
       t.id === taskId ? { ...t, completed: false, completedAt: undefined } : t
     );
     setAllTasks(updated);
@@ -118,19 +118,19 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const deleteTask = async (taskId: string) => {
-    const updated = allTasks.filter(t => t.id !== taskId);
+    const updated = allTasks.filter((t) => t.id !== taskId);
     setAllTasks(updated);
     await saveTasks(updated);
   };
 
   const updateTask = async (task: Task) => {
-    const updated = allTasks.map(t => t.id === task.id ? task : t);
+    const updated = allTasks.map((t) => (t.id === task.id ? task : t));
     setAllTasks(updated);
     await saveTasks(updated);
   };
 
   const addFocusTime = async (taskId: string, minutes: number) => {
-    const updated = allTasks.map(t =>
+    const updated = allTasks.map((t) =>
       t.id === taskId ? { ...t, focusTime: (t.focusTime || 0) + minutes } : t
     );
     setAllTasks(updated);
@@ -138,18 +138,20 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <TaskContext.Provider value={{
-      tasks,
-      loading,
-      canAddTask,
-      completedCount,
-      addTask,
-      completeTask,
-      uncompleteTask,
-      deleteTask,
-      updateTask,
-      addFocusTime,
-    }}>
+    <TaskContext.Provider
+      value={{
+        tasks,
+        loading,
+        canAddTask,
+        completedCount,
+        addTask,
+        completeTask,
+        uncompleteTask,
+        deleteTask,
+        updateTask,
+        addFocusTime,
+      }}
+    >
       {children}
     </TaskContext.Provider>
   );

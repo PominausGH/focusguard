@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "FocusGuard",
-    "slug": "focusguard",
+    "name": "FocusShield",
+    "slug": "focusshield",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,22 +13,20 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.focusguard.app"
+      "bundleIdentifier": "com.focusshield.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#16213e"
       },
-      "package": "com.focusguard.app"
+      "package": "com.focusshield.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "scheme": "focusguard"
+    "plugins": ["expo-router"],
+    "scheme": "focusshield"
   }
 }

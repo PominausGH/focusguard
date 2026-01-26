@@ -8,10 +8,13 @@ export const exportAnalyticsToCSV = async (data: AnalyticsData): Promise<void> =
 
     if (Platform.OS === 'web') {
       // Web: Download via blob
-      downloadCSVWeb(csv, `focusguard-analytics-${new Date().toISOString().split('T')[0]}.csv`);
+      downloadCSVWeb(csv, `focusshield-analytics-${new Date().toISOString().split('T')[0]}.csv`);
     } else {
       // Mobile: Use Expo Sharing
-      await downloadCSVMobile(csv, `focusguard-analytics-${new Date().toISOString().split('T')[0]}.csv`);
+      await downloadCSVMobile(
+        csv,
+        `focusshield-analytics-${new Date().toISOString().split('T')[0]}.csv`
+      );
     }
   } catch (error) {
     console.error('Error exporting CSV:', error);
@@ -23,7 +26,7 @@ const generateCSV = (data: AnalyticsData): string => {
   let csv = '';
 
   // Summary Section
-  csv += 'FocusGuard Analytics Export\n';
+  csv += 'FocusShield Analytics Export\n';
   csv += `Export Date,${new Date().toISOString()}\n\n`;
 
   // Overall Stats
@@ -51,12 +54,14 @@ const generateCSV = (data: AnalyticsData): string => {
     csv += 'Date,Preset,Duration (minutes),Completed At,Linked Task\n';
 
     // Sort by date (most recent first)
-    const sortedSessions = [...data.sessionHistory].sort((a, b) =>
-      new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
+    const sortedSessions = [...data.sessionHistory].sort(
+      (a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
     );
 
-    sortedSessions.forEach(session => {
-      const taskTitle = session.linkedTaskTitle ? `"${session.linkedTaskTitle.replace(/"/g, '""')}"` : '';
+    sortedSessions.forEach((session) => {
+      const taskTitle = session.linkedTaskTitle
+        ? `"${session.linkedTaskTitle.replace(/"/g, '""')}"`
+        : '';
       csv += `${session.date},${session.preset},${session.duration},${session.completedAt},${taskTitle}\n`;
     });
   }
@@ -82,7 +87,7 @@ const downloadCSVMobile = async (csvContent: string, filename: string) => {
   // Dynamic import to avoid web bundle issues
   const [FileSystemModule, SharingModule] = await Promise.all([
     import('expo-file-system'),
-    import('expo-sharing')
+    import('expo-sharing'),
   ]);
 
   const FileSystem = FileSystemModule.default || FileSystemModule;

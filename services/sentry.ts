@@ -1,7 +1,7 @@
 /**
  * Sentry Error Tracking Service
  *
- * Provides centralized error tracking and monitoring for the FocusGuard app.
+ * Provides centralized error tracking and monitoring for the FocusShield app.
  * Configure EXPO_PUBLIC_SENTRY_DSN in your .env file to enable.
  */
 

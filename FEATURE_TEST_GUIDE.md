@@ -3,7 +3,9 @@
 ## New Features to Test
 
 ### 1. Task Priority Colors ✅
+
 **How to test:**
+
 1. Open the app at http://localhost:8081
 2. Sign in if needed
 3. Add 3 tasks
@@ -17,7 +19,9 @@
 ---
 
 ### 2. Estimated Pomodoros & Subtasks ✅
+
 **How to test:**
+
 1. Click the **pencil icon** (edit) on any task
 2. A modal should appear with:
    - Current task title at top
@@ -25,11 +29,13 @@
    - "Subtasks (0/3)" section with add functionality
 
 **Test Estimated Pomodoros:**
+
 - Enter a number like "3" in the pomodoros field
 - Click "Save Changes"
 - Task card should now show a badge: "3 🍅"
 
 **Test Subtasks:**
+
 - Click edit again
 - Add a subtask title (e.g., "Research API")
 - Click the + button
@@ -40,6 +46,7 @@
 - Check/uncheck subtasks to mark them complete
 
 **Expected Result:**
+
 - Pomodoro estimate appears as badge
 - Subtasks can be added (max 3)
 - Subtasks can be toggled complete/incomplete
@@ -48,12 +55,15 @@
 ---
 
 ### 3. Session History Calendar ✅
+
 **How to test:**
+
 1. Go to **Settings** tab
 2. Scroll to "SESSION HISTORY" section
 3. Click the **chevron down** icon to expand
 
 **What to check:**
+
 - Calendar shows current month
 - Use **<** and **>** arrows to navigate months
 - Days with completed pomodoros have:
@@ -65,6 +75,7 @@
 - Bottom shows preset breakdown if sessions exist
 
 **To generate test data (optional):**
+
 1. Complete a pomodoro session first (see Pomodoro test below)
 2. Come back to settings to see it in the calendar
 
@@ -73,23 +84,28 @@
 ---
 
 ### 4. CSV Export ✅
+
 **How to test:**
+
 1. Go to **Settings** tab
 2. Scroll to "DATA MANAGEMENT" section
 3. Click "Export Analytics to CSV" button
 
 **Expected Result:**
+
 - On Web: CSV file downloads automatically
 - CSV contains:
   - Overall statistics
   - Pomodoro breakdown by preset
   - Session history with dates and details
-- Check your Downloads folder for file named like `focusguard-analytics-2026-01-10.csv`
+- Check your Downloads folder for file named like `focusshield-analytics-2026-01-10.csv`
 
 ---
 
 ### 5. Theme System ✅
+
 **How to test:**
+
 1. Go to **Settings** tab
 2. Scroll to "APPEARANCE" section
 3. Two options should be visible:
@@ -97,6 +113,7 @@
    - **Light Mode** (sun icon)
 
 **Test:**
+
 - Click "Light Mode"
 - Click "Save Settings" button
 - Note the alert message mentions reloading
@@ -107,6 +124,7 @@
 ---
 
 ### 6. Complete Feature Integration Test
+
 **Full workflow test:**
 
 1. **Add a task with details:**
