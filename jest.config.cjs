@@ -9,7 +9,7 @@ module.exports = {
       },
     ],
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   collectCoverageFrom: [
     'services/**/*.{ts,tsx}',
     'utils/**/*.{ts,tsx}',
