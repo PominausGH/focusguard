@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  focusguard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: focusguard
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3010:80"  # Only expose to localhost, nginx will proxy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+# nginx on the host will reverse proxy to localhost:3010
