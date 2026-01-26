@@ -1,49 +1,92 @@
 # FocusShield
 
-React Native/Expo mobile app with Firebase backend.
+React Native/Expo web app with Node.js/PostgreSQL backend.
 
 ## Tech Stack
 
-- Framework: React Native with Expo SDK 54
-- Navigation: Expo Router
-- Backend: Firebase
-- Language: TypeScript/JavaScript
-- State: React Context + AsyncStorage
+- **Frontend**: React Native with Expo SDK 54, Expo Router
+- **Backend**: Node.js, Express, PostgreSQL
+- **Auth**: JWT tokens
+- **State**: React Context + API calls (demo mode uses AsyncStorage)
+- **Language**: TypeScript/JavaScript
 
-## Commands
+## Deployment
 
-- `npm start` - Start Expo dev server
-- `npm run android` - Run on Android
-- `npm run ios` - Run on iOS
-- `npm run web` - Run in browser
+- **Domain**: focusshield.app (landing), app.focusshield.app (React app)
+- **Containers**: frontend (3012), api (3011), db (PostgreSQL)
+- **Docker path on VPS**: `/opt/docker/focusguard`
+
+### Deploy Commands
+
+```bash
+# Local - commit and push
+git add -A && git commit -m "message" && git push
+
+# VPS - deploy
+ssh root@69.62.79.159
+cd /opt/docker/focusguard
+git pull
+docker compose up -d --build --force-recreate
+```
+
+### Architecture
+
+```
+Internet → Cloudflare → NPM (80/443)
+  ├── focusshield.app → frontend:3012 → landing.html
+  ├── app.focusshield.app → frontend:3012 → React SPA
+  └── */api → api:3011 → Express API → PostgreSQL
+```
+
+## Local Development
+
+```bash
+npm start          # Start Expo dev server
+npm run web        # Run in browser
+npm run android    # Run on Android
+npm run ios        # Run on iOS
+npm test           # Run Jest tests
+```
 
 ## Structure
 
-- `app/` - Expo Router screens
+- `app/` - Expo Router screens (index.tsx, auth.tsx, (tabs)/)
 - `components/` - Reusable components
-- `contexts/` - React Context providers
-- `hooks/` - Custom React hooks
-- `assets/` - Static assets
+- `contexts/` - AuthContext, TaskContext (API or demo mode)
+- `services/` - api.ts, analytics.ts, validation.ts
+- `backend/` - Express API (routes/, models/, middleware/)
+- `public/` - landing.html, privacy.html
 
-## Environment
+## Environment Variables
 
-- Copy `.env` for environment variables
-- Firebase config required
+### Frontend (.env)
 
-## Documentation
+```
+EXPO_PUBLIC_API_URL=https://app.focusshield.app/api
+```
 
-- `ANALYTICS_DASHBOARD.md` - Analytics setup
-- `AUTHENTICATION_SECURITY.md` - Auth implementation
-- `FEATURE_TEST_GUIDE.md` - Testing guide
+### Backend (backend/.env)
 
-## Superpowers
+```
+DATABASE_URL=postgresql://focusshield:password@db:5432/focusshield
+JWT_SECRET=your-secret
+JWT_EXPIRES_IN=7d
+```
 
-Use these skills when working on this project:
+## Demo Mode
 
-- `/brainstorming` - Before creating new screens or features
-- `/writing-plans` - For multi-step implementations
-- `/test-driven-development` - Write tests for components
-- `/systematic-debugging` - When fixing mobile or Firebase issues
-- `/requesting-code-review` - After completing features
-- `/verification-before-completion` - Test on device before claiming done
-- `/finishing-a-development-branch` - When ready to merge
+Both AuthContext and TaskContext have `DEMO_MODE` flag:
+
+- `true` = Uses AsyncStorage (no backend needed)
+- `false` = Uses API calls to backend
+
+## Key Files
+
+| File                       | Purpose                  |
+| -------------------------- | ------------------------ |
+| `contexts/AuthContext.tsx` | Auth state, login/signup |
+| `contexts/TaskContext.tsx` | Task CRUD operations     |
+| `services/api.ts`          | HTTP client for backend  |
+| `nginx.conf`               | Container routing        |
+| `docker-compose.yml`       | All services             |
+| `public/landing.html`      | Marketing page           |
