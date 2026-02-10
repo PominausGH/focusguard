@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # Frontend (React Native Web)
   frontend:
     build:
       context: .
@@ -9,17 +6,37 @@ services:
     container_name: focusshield-frontend
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3010:80"
+    - 127.0.0.1:3012:80
     depends_on:
-      - api
+    - api
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test:
+      - CMD
+      - wget
+      - --quiet
+      - --tries=1
+      - --spider
+      - http://localhost/
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-
-  # Backend API
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          pids: 200
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
+    - NET_BIND_SERVICE
   api:
     build:
       context: ./backend
@@ -27,42 +44,73 @@ services:
     container_name: focusshield-api
     restart: unless-stopped
     ports:
-      - "127.0.0.1:3011:3000"
+    - 127.0.0.1:3011:3000
     environment:
-      - DATABASE_URL=postgresql://focusshield:${DB_PASSWORD:-focusshield123}@db:5432/focusshield
-      - JWT_SECRET=${JWT_SECRET:-change-this-in-production-use-long-random-string}
-      - JWT_EXPIRES_IN=7d
-      - NODE_ENV=production
+    - DATABASE_URL=postgresql://focusshield:${DB_PASSWORD:?DB_PASSWORD required}@db:5432/focusshield
+    - JWT_SECRET=${JWT_SECRET:?JWT_SECRET required}
+    - JWT_EXPIRES_IN=7d
+    - NODE_ENV=production
     depends_on:
       db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      test:
+      - CMD
+      - wget
+      - --quiet
+      - --tries=1
+      - --spider
+      - http://localhost:3000/health
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-
-  # PostgreSQL Database
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          pids: 200
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
   db:
     image: postgres:15-alpine
     container_name: focusshield-db
     restart: unless-stopped
     environment:
-      - POSTGRES_USER=focusshield
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-focusshield123}
-      - POSTGRES_DB=focusshield
+    - POSTGRES_USER=focusshield
+    - POSTGRES_PASSWORD=${DB_PASSWORD:?DB_PASSWORD required}
+    - POSTGRES_DB=focusshield
     volumes:
-      - focusshield_data:/var/lib/postgresql/data
+    - focusshield_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U focusshield"]
+      test:
+      - CMD-SHELL
+      - pg_isready -U focusshield
       interval: 10s
       timeout: 5s
       retries: 5
-
+    cap_drop:
+    - ALL
+    security_opt:
+    - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          pids: 200
+    cap_add:
+    - CHOWN
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
 volumes:
-  focusshield_data:
-
-# nginx on the host will reverse proxy:
-# - focusshield.app -> frontend (localhost:3010)
-# - focusshield.app/api -> api (localhost:3011)
+  focusshield_data: null
