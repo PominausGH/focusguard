@@ -122,6 +122,9 @@ export const FocusProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       preset.workDuration / 60000, // convert to minutes
       session.linkedTaskId
     );
+    if (typeof window !== 'undefined' && window.umami) {
+      window.umami.track('focus_session_completed', { mode: session.mode });
+    }
 
     // Determine break type
     const isLongBreak = newPomodoroCount % preset.longBreakAfter === 0;

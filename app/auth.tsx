@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { router } from 'expo-router';
@@ -32,6 +33,9 @@ export default function AuthScreen() {
     try {
       if (isSignUp) {
         await signUp(email, password, displayName);
+        if (typeof window !== 'undefined' && window.umami) {
+          window.umami.track('signup');
+        }
       } else {
         await signIn(email, password);
       }
@@ -138,6 +142,19 @@ export default function AuthScreen() {
             </View>
           )}
 
+          {isSignUp && (
+            <Text style={styles.legalText}>
+              By creating an account, you agree to our{' '}
+              <Text
+                style={styles.legalLink}
+                onPress={() => Linking.openURL('https://focusshield.app/privacy')}
+              >
+                Privacy Policy
+              </Text>
+              .
+            </Text>
+          )}
+
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleAuth}
@@ -160,7 +177,7 @@ export default function AuthScreen() {
         <View style={styles.featureList}>
           <View style={styles.feature}>
             <Ionicons name="checkmark-circle" size={20} color="#e94560" />
-            <Text style={styles.featureText}>Only 3 tasks per day</Text>
+            <Text style={styles.featureText}>Only 5 tasks per day</Text>
           </View>
           <View style={styles.feature}>
             <Ionicons name="timer" size={20} color="#e94560" />
@@ -289,8 +306,18 @@ const styles = StyleSheet.create({
     fontSize: 11,
     marginBottom: 2,
   },
+  legalText: {
+    color: '#8b8b8b',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 12,
+  },
+  legalLink: {
+    color: '#c73650',
+    textDecorationLine: 'underline',
+  },
   button: {
-    backgroundColor: '#e94560',
+    backgroundColor: '#c73650',
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',

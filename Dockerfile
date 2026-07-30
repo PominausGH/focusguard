@@ -14,6 +14,7 @@ COPY . .
 
 # Build the web app
 RUN npx expo export --platform web
+RUN node inject-marketing-fixes.js || true
 
 # Production stage - serve with nginx
 FROM nginx:alpine

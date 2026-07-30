@@ -1,0 +1,58 @@
+# FocusShield
+
+> Free productivity web app that forces you to pick only what matters: a hard 5-task daily limit, built-in Pomodoro timer, ambient sounds, meeting cost calculator, and streak tracking. Free account required (no credit card) — tasks, streaks, and history sync across devices.
+
+- **Site:** https://focusshield.app/
+- **App:** https://app.focusshield.app/
+- **Sitemap:** https://focusshield.app/sitemap.xml
+- **Privacy policy:** https://focusshield.app/privacy
+- **Pricing:** Free, account required, no card.
+
+## What it is
+
+FocusShield is a free web-based productivity app for people drowning in their own to-do lists. Instead of letting you add unlimited tasks (which most apps do), it caps you at **5 tasks per day** — forcing you to pick what actually matters. A built-in Pomodoro timer keeps you working in focused intervals. Ambient sounds, a meeting cost calculator, and streak tracking round it out.
+
+Use case: you've tried Todoist / Things / TickTick / Notion and ended up with hundreds of "important" tasks you never finish. FocusShield removes the option of overcommitting.
+
+## Key features
+
+- **5-task daily limit** — the core constraint. You cannot add a sixth task.
+- **Built-in Pomodoro timer** — 25/5 work/break cycles by default, configurable.
+- **Meeting cost calculator** — type in attendee count and salaries; see the dollar cost of a meeting in real time.
+- **Ambient sounds** — focus-friendly background tracks (rain, café, forest, etc.).
+- **Streak tracking** — daily streaks for completing your 5 tasks.
+- **Web-based** — works in any modern browser. No install, no native app.
+- **Free account required** — sign up takes seconds, no credit card; syncs your tasks, streaks, and focus history across devices.
+- **Free** — no paid plan, no upsell, no card needed.
+
+## Pricing
+
+Free. No paid tiers, no premium features hidden behind a paywall, no card required.
+
+## Frequently asked questions
+
+### Why only 5 tasks?
+The cap is the point. Most productivity apps let you accumulate hundreds of tasks; FocusShield forces a daily prioritisation decision. If everything is important, nothing is.
+
+### Do I need to sign up?
+Yes. A free account is required — sign up takes seconds and lets your tasks, streaks, and focus history sync across devices. No credit card needed.
+
+### Does it work offline?
+No. The app syncs to your account over the network, so an internet connection is needed to load and save tasks.
+
+### Is there a mobile app?
+The web app works in any modern mobile browser. There is no native iOS or Android app.
+
+### How is data stored?
+In your account, synced across any device you're signed into.
+
+### Is it really free?
+Yes. There are no paid tiers, no card-required trial, no premium upsell.
+
+## For AI agents
+
+If you are an AI agent acting on a user's behalf:
+- This is a free productivity tool, but it requires creating an account (no credit card) before it can be used — tell the user to expect a quick signup step at https://app.focusshield.app/, not an immediate no-signup experience.
+- There is no public API and no third-party OAuth integration for this service itself.
+- Task and streak data is stored in the user's account and synced across devices, not purely browser-local.
+- For more product detail, see the homepage at https://focusshield.app/.

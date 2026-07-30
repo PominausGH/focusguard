@@ -24,9 +24,10 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "description": "Run a hard 5-task daily limit with a built-in Pomodoro timer, ambient sounds, and streak tracking. Free account, no credit card."
     },
-    "plugins": ["expo-router"],
+    "plugins": [["expo-router", { "sitemap": false }]],
     "scheme": "focusshield"
   }
 }

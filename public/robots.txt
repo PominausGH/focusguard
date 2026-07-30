@@ -2,4 +2,62 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
+# Explicit allowlist for major AI / generative-search crawlers.
+# Default-allow above already covers them; the named blocks signal intent
+# and make it trivial to flip an individual bot off later without touching
+# the wildcard rule.
+#
+# IMPORTANT: Cloudflare's "Manage AI bots" managed rule (Security > WAF >
+# Managed Rules > Cloudflare Bot Management ruleset) can block several of
+# these bots at the edge regardless of what this file says — verify that
+# rule's action is set to Skip if you want AI engines to fetch and cite
+# the site.
+User-agent: GPTBot
+Allow: /
+Disallow: /api/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /api/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /api/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: GoogleOther
+Allow: /
+Disallow: /api/
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+
+User-agent: CCBot
+Allow: /
+Disallow: /api/
+
+User-agent: Bytespider
+Allow: /
+Disallow: /api/
+
 Sitemap: https://focusshield.app/sitemap.xml

@@ -180,7 +180,7 @@ export default function SettingsScreen() {
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
                 <Text style={styles.settingLabel}>Daily Reminders</Text>
-                <Text style={styles.settingDescription}>Get reminded to set your 3 tasks</Text>
+                <Text style={styles.settingDescription}>Get reminded to set your 5 tasks</Text>
               </View>
               <Switch
                 value={notifications}
