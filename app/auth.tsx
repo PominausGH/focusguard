@@ -61,7 +61,9 @@ export default function AuthScreen() {
       <View style={styles.content}>
         <View style={styles.logoContainer}>
           <Ionicons name="shield-checkmark" size={80} color="#e94560" />
-          <Text style={styles.title}>FocusShield</Text>
+          <Text style={styles.title} role="heading" aria-level={1}>
+            FocusShield
+          </Text>
           <Text style={styles.subtitle}>Do less. Achieve more.</Text>
         </View>
 
