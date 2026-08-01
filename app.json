@@ -25,6 +25,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
+      "name": "FocusShield – 5-Task Daily Limit & Pomodoro Timer",
       "description": "Run a hard 5-task daily limit with a built-in Pomodoro timer, ambient sounds, and streak tracking. Free account, no credit card."
     },
     "plugins": [["expo-router", { "sitemap": false }]],
