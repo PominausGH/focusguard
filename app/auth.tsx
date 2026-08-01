@@ -149,7 +149,13 @@ export default function AuthScreen() {
               By creating an account, you agree to our{' '}
               <Text
                 style={styles.legalLink}
-                onPress={() => Linking.openURL('https://focusshield.app/privacy')}
+                role="link"
+                {...(Platform.OS === 'web'
+                  ? {
+                      href: 'https://focusshield.app/privacy',
+                      hrefAttrs: { target: '_blank', rel: 'noopener noreferrer' },
+                    }
+                  : { onPress: () => Linking.openURL('https://focusshield.app/privacy') })}
               >
                 Privacy Policy
               </Text>
