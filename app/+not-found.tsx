@@ -6,7 +6,7 @@ export default function NotFoundScreen() {
     <>
       <Stack.Screen options={{ title: 'Page Not Found' }} />
       <View style={styles.container}>
-        <Text style={styles.title} role="heading" aria-level={1}>
+        <Text style={styles.title} role="heading" aria-level={2}>
           Page not found
         </Text>
         <Text style={styles.subtitle}>The page you're looking for doesn't exist.</Text>

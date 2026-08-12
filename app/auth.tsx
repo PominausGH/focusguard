@@ -152,6 +152,19 @@ export default function AuthScreen() {
                 role="link"
                 {...(Platform.OS === 'web'
                   ? {
+                      href: 'https://focusshield.app/terms',
+                      hrefAttrs: { target: '_blank', rel: 'noopener noreferrer' },
+                    }
+                  : { onPress: () => Linking.openURL('https://focusshield.app/terms') })}
+              >
+                Terms of Service
+              </Text>{' '}
+              and{' '}
+              <Text
+                style={styles.legalLink}
+                role="link"
+                {...(Platform.OS === 'web'
+                  ? {
                       href: 'https://focusshield.app/privacy',
                       hrefAttrs: { target: '_blank', rel: 'noopener noreferrer' },
                     }
@@ -344,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   switchText: {
-    color: '#e94560',
+    color: '#ef6785',
     fontSize: 14,
   },
   featureList: {
