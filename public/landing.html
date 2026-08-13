@@ -1017,12 +1017,16 @@
     <!-- Cookie / Privacy notice -->
     <div class="cookie-notice" id="cookieNotice">
         <span>This site uses privacy-friendly analytics (self-hosted, no personal data). <a href="/privacy">Privacy policy</a></span>
-        <button onclick="document.getElementById('cookieNotice').classList.add('hidden');localStorage.setItem('fs-cookie-ack','1')">Got it</button>
+        <button id="cookieAck">Got it</button>
     </div>
     <script>
         if (localStorage.getItem('fs-cookie-ack')) {
             document.getElementById('cookieNotice').classList.add('hidden');
         }
+        document.getElementById('cookieAck').addEventListener('click', function () {
+            document.getElementById('cookieNotice').classList.add('hidden');
+            localStorage.setItem('fs-cookie-ack', '1');
+        });
     </script>
 </body>
 </html>
