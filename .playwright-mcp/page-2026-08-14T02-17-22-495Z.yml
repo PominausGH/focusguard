@@ -1,0 +1,121 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: 🛡️
+      - text: FocusShield
+    - generic [ref=e7]:
+      - link "Home" [ref=e8] [cursor=pointer]:
+        - /url: /
+      - link "Blog" [ref=e9] [cursor=pointer]:
+        - /url: /blog/
+      - link "Privacy" [ref=e10] [cursor=pointer]:
+        - /url: /privacy
+      - link "Terms" [ref=e11] [cursor=pointer]:
+        - /url: /terms
+      - link "Start Free" [ref=e12] [cursor=pointer]:
+        - /url: https://app.focusshield.app
+  - generic [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]: ●
+      - text: Free & Open Source
+    - heading "Free Pomodoro Timer Built Around 5 Daily Tasks." [level=1] [ref=e17]: Free Pomodoro TimerBuilt Around 5 Daily Tasks.
+    - paragraph [ref=e18]: FocusShield enforces a hard limit of 5 tasks per day, combined with a built-in Pomodoro timer (25/5, 50/10, or 15/5). Free account, no credit card — just sign up and start.
+    - generic [ref=e19]:
+      - link "Start Free — No Card Required" [ref=e20] [cursor=pointer]:
+        - /url: https://app.focusshield.app
+      - link "GitHub" [ref=e23] [cursor=pointer]:
+        - /url: https://github.com/PominausGH/focusguard
+  - generic [ref=e27]:
+    - paragraph [ref=e28]: Features
+    - heading "Built for people who actually want to get things done" [level=2] [ref=e29]: Built for people who actuallywant to get things done
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - heading "Hard 5-task limit" [level=3] [ref=e36]
+        - paragraph [ref=e37]: No 50-item lists you'll never finish. Five tasks per day — pick what actually matters, then stop adding more.
+      - generic [ref=e38]:
+        - heading "Pomodoro timer" [level=3] [ref=e43]
+        - paragraph [ref=e44]: Classic 25/5, Deep Work 50/10, or Sprint 15/5. Each session links to a task — every focused minute tracked.
+      - generic [ref=e45]:
+        - heading "Meeting cost calculator" [level=3] [ref=e51]
+        - paragraph [ref=e52]: Enter team size and average salary. See the running cost of the meeting in real time. Make every meeting justify its existence.
+      - generic [ref=e53]:
+        - heading "Daily streaks" [level=3] [ref=e57]
+        - paragraph [ref=e58]: Build momentum. See your current and longest streak. Don't break the chain.
+      - generic [ref=e59]:
+        - heading "Ambient sounds" [level=3] [ref=e65]
+        - paragraph [ref=e66]: Rain, café noise, or lo-fi. Pick a soundtrack, block distractions, and keep focus sessions going longer.
+      - generic [ref=e67]:
+        - heading "Productivity analytics" [level=3] [ref=e72]
+        - paragraph [ref=e73]: Completed tasks, session history, trends over time. Export your data anytime — it's yours.
+  - generic [ref=e76]:
+    - generic [ref=e77]:
+      - generic [ref=e78]: →
+      - generic [ref=e79]: Free sign-up, no credit card. Just open and start.
+    - generic [ref=e80]:
+      - generic [ref=e81]: "5"
+      - generic [ref=e82]: Tasks per day max
+    - generic [ref=e83]:
+      - generic [ref=e84]: "3"
+      - generic [ref=e85]: Timer presets
+    - generic [ref=e86]:
+      - generic [ref=e87]: ∞
+      - generic [ref=e88]: Focus sessions
+    - generic [ref=e89]:
+      - generic [ref=e90]: "0"
+      - generic [ref=e91]: Cost. Forever free.
+    - generic [ref=e92]:
+      - generic [ref=e93]: 📱
+      - generic [ref=e94]: Works on desktop, tablet, and mobile. Your data syncs across devices.
+  - generic [ref=e97]:
+    - heading "Ready to protect your focus?" [level=2] [ref=e98]
+    - paragraph [ref=e99]: Free account. No credit card. Just productivity.
+    - link "Launch FocusShield" [ref=e100] [cursor=pointer]:
+      - /url: https://app.focusshield.app
+  - generic [ref=e104]:
+    - heading "Frequently Asked Questions" [level=2] [ref=e105]
+    - generic [ref=e106]:
+      - heading "Is FocusShield completely free?" [level=3] [ref=e107]
+      - paragraph [ref=e108]: Yes — 100% free, forever. No subscription, no premium tier, no ads. FocusShield is also fully open source on GitHub.
+    - generic [ref=e109]:
+      - heading "Do I need to sign up or create an account?" [level=3] [ref=e110]
+      - paragraph [ref=e111]: Yes, a free account is required to use FocusShield. Sign up takes seconds and lets your tasks, streaks, and focus history sync across devices.
+    - generic [ref=e112]:
+      - heading "Why only 5 tasks per day?" [level=3] [ref=e113]
+      - paragraph [ref=e114]: The limit is deliberate. Research in decision psychology shows that constraining choices reduces decision fatigue and increases follow-through. You pick what actually matters — not everything.
+    - generic [ref=e115]:
+      - heading "What Pomodoro timer presets are available?" [level=3] [ref=e116]
+      - paragraph [ref=e117]: "Three presets: Classic 25/5, Deep Work 50/10, and Sprint 15/5. Each session links to a task so every focused minute is tracked against real work."
+    - generic [ref=e118]:
+      - heading "Does FocusShield work on mobile?" [level=3] [ref=e119]
+      - paragraph [ref=e120]: Yes. FocusShield is a responsive web app that works on desktop, tablet, and mobile browsers. No app store download required.
+    - generic [ref=e121]:
+      - heading "How does the meeting cost calculator work?" [level=3] [ref=e122]
+      - paragraph [ref=e123]: Enter your team size and average salary. FocusShield calculates and displays the running cost of your meeting in real time, in USD — so teams can decide whether a meeting is worth the time.
+    - generic [ref=e124]:
+      - heading "Can I export my productivity data?" [level=3] [ref=e125]
+      - paragraph [ref=e126]: Yes. The analytics section lets you view completed tasks, focus session history, and productivity trends, with an export option for your records.
+    - generic [ref=e127]:
+      - heading "How is FocusShield different from Forest or other Pomodoro apps?" [level=3] [ref=e128]
+      - paragraph [ref=e129]: FocusShield is free (no credit card required) and combines a hard task limit with a Pomodoro timer in a single web app. Forest requires a paid download. FocusShield runs in any browser — just sign up and start.
+  - contentinfo [ref=e130]:
+    - generic [ref=e131]:
+      - generic [ref=e132]: "© 2026 FocusShield ABN: 65 366 917 788"
+      - generic [ref=e133]:
+        - link "App" [ref=e134] [cursor=pointer]:
+          - /url: https://app.focusshield.app
+        - link "GitHub" [ref=e135] [cursor=pointer]:
+          - /url: https://github.com/PominausGH/focusguard
+        - link "Privacy" [ref=e136] [cursor=pointer]:
+          - /url: /privacy
+        - link "Terms" [ref=e137] [cursor=pointer]:
+          - /url: /terms
+        - link "Built by Dainty Trading" [ref=e138] [cursor=pointer]:
+          - /url: https://daintytrading.com/services.html
+        - link "Support ☕" [ref=e139] [cursor=pointer]:
+          - /url: https://buymeacoffee.com/focusshield.app
+  - generic [ref=e140]:
+    - generic [ref=e141]:
+      - text: This site uses privacy-friendly analytics (self-hosted, no personal data).
+      - link "Privacy policy" [ref=e142] [cursor=pointer]:
+        - /url: /privacy
+    - button "Got it" [ref=e143] [cursor=pointer]
