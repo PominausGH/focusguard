@@ -44,3 +44,6 @@ yarn-error.*
 *.tmp
 *.temp
 *.pem
+
+# Playwright MCP debug output (screenshots/snapshots from manual verification)
+.playwright-mcp/
