@@ -280,6 +280,26 @@
             opacity: 0.85;
         }
 
+        .nav-toggle-checkbox {
+            display: none;
+        }
+
+        .nav-toggle-label {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px 4px;
+            z-index: 101;
+        }
+
+        .nav-toggle-label span {
+            width: 22px;
+            height: 2px;
+            background: var(--text);
+            border-radius: 2px;
+        }
+
         /* Hero */
         .hero {
             min-height: 100vh;
@@ -729,13 +749,26 @@
 
         /* Responsive */
         @media (min-width: 1025px) {
+            .hero {
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                gap: 5vw;
+            }
+
             .hero .container {
                 max-width: 480px;
+                margin: 0;
             }
 
             .hero-visual {
+                position: static;
+                top: auto;
+                right: auto;
+                transform: none;
                 width: 30%;
                 max-width: 300px;
+                flex-shrink: 0;
             }
         }
 
@@ -775,6 +808,39 @@
                 flex-direction: column;
                 gap: 20px;
                 text-align: center;
+            }
+
+            .nav-toggle-label {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 64px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                background: var(--bg);
+                border-bottom: 1px solid var(--border);
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.25s ease;
+            }
+
+            .nav-links a {
+                padding: 14px 24px;
+            }
+
+            .nav-links a.nav-btn {
+                display: inline-block;
+                text-align: center;
+                margin: 8px 24px 16px;
+            }
+
+            .nav-toggle-checkbox:checked ~ .nav-links {
+                max-height: 400px;
             }
         }
 
@@ -823,6 +889,10 @@
             <div class="logo-icon">🛡️</div>
             FocusShield
         </div>
+        <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox">
+        <label for="nav-toggle" class="nav-toggle-label" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </label>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/blog/">Blog</a>
