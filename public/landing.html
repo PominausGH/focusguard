@@ -570,39 +570,6 @@
         .feature-card:nth-child(5) .feature-icon { background: rgba(16,185,129,0.1); color: #10b981; }
         .feature-card:nth-child(6) .feature-icon { background: rgba(139,92,246,0.1); color: #a78bfa; }
 
-        /* Cookie notice */
-        .cookie-notice {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            padding: 14px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            z-index: 9999;
-            transition: transform 0.3s;
-        }
-        .cookie-notice.hidden { transform: translateY(100%); }
-        .cookie-notice a { color: var(--accent); text-decoration: none; }
-        .cookie-notice button {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
         .feature-card h3 {
             font-size: 1.2rem;
             font-weight: 600;
@@ -1099,12 +1066,5 @@
             </div>
         </div>
     </footer>
-
-    <!-- Cookie / Privacy notice -->
-    <div class="cookie-notice" id="cookieNotice">
-        <span>This site uses privacy-friendly analytics (self-hosted, no personal data). <a href="/privacy">Privacy policy</a></span>
-        <button id="cookieAck">Got it</button>
-    </div>
-    <script src="/cookie-notice.js" defer></script>
 </body>
 </html>
