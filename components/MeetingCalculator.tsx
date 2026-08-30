@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { analytics } from '../services/analytics';
+import { useCrossPromo } from '../hooks/useCrossPromo';
+import { CrossPromoCard } from './CrossPromoCard';
 
 interface MeetingCalculatorProps {
   defaultSalary: number;
@@ -15,6 +17,7 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
   const [totalCost, setTotalCost] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionStartTimeRef = useRef<number>(0);
+  const { offer, dismiss, open } = useCrossPromo('meeting_summary', !isRunning && totalCost > 0);
 
   // Update salary when defaultSalary prop changes (e.g., from settings)
   useEffect(() => {
@@ -203,6 +206,8 @@ export const MeetingCalculator: React.FC<MeetingCalculatorProps> = ({ defaultSal
               : '💡 Two-person meetings are the most efficient'}
         </Text>
       </View>
+
+      {offer && <CrossPromoCard offer={offer} onOpen={open} onDismiss={dismiss} />}
     </View>
   );
 };

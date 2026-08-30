@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocus } from '../contexts/FocusContext';
+import { useCrossPromo } from '../hooks/useCrossPromo';
+import { CrossPromoCard } from './CrossPromoCard';
 
 const SHORT_BREAK_SUGGESTIONS = [
   'Stand and stretch 🧘',
@@ -26,11 +28,15 @@ export const BreakOverlay: React.FC = () => {
 
   const suggestion = useMemo(() => {
     if (!session) return '';
-    const suggestions = session.state === 'longBreak' ? LONG_BREAK_SUGGESTIONS : SHORT_BREAK_SUGGESTIONS;
+    const suggestions =
+      session.state === 'longBreak' ? LONG_BREAK_SUGGESTIONS : SHORT_BREAK_SUGGESTIONS;
     return suggestions[Math.floor(Math.random() * suggestions.length)];
   }, [session?.id, session?.state]);
 
-  if (!session || session.state === 'working') {
+  const isOnBreak = !!session && session.state !== 'working';
+  const { offer, dismiss, open } = useCrossPromo('focus_break', isOnBreak);
+
+  if (!isOnBreak) {
     return null;
   }
 
@@ -55,6 +61,8 @@ export const BreakOverlay: React.FC = () => {
         </View>
 
         <Text style={styles.hint}>Take a moment to recharge</Text>
+
+        {offer && <CrossPromoCard offer={offer} onOpen={open} onDismiss={dismiss} />}
 
         <TouchableOpacity style={styles.skipButton} onPress={skipBreak}>
           <Text style={styles.skipButtonText}>Skip Break</Text>
