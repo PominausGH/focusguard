@@ -47,3 +47,8 @@ yarn-error.*
 
 # Playwright MCP debug output (screenshots/snapshots from manual verification)
 .playwright-mcp/
+
+# Claude Code session state / agent worktrees — untracked here would leave
+# git status permanently dirty, which silently breaks any deploy-pull cron
+# that gates on a clean working tree (see focusshield-deploy-pull.sh)
+.claude/
