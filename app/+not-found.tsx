@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Page Not Found' }} />
+      <Stack.Screen options={{ title: '404 - FocusShield' }} />
       <View style={styles.container}>
         <Text style={styles.title} role="heading" aria-level={2}>
           Page not found
