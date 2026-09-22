@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   switchText: {
-    color: '#ef6785',
+    color: '#ff7a94',
     fontSize: 14,
   },
   featureList: {
