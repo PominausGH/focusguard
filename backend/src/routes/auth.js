@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { pool } = require('../models/db');
 const { authMiddleware } = require('../middleware/auth');
+const { sendEmail, welcomeEmail } = require('../mailer');
 
 const router = express.Router();
 
@@ -53,6 +54,11 @@ router.post('/register', registerValidation, async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d',
     });
+
+    const { subject, html } = welcomeEmail(user.display_name);
+    sendEmail(user.email, subject, html).catch((err) =>
+      console.error('Failed to send welcome email:', err)
+    );
 
     res.status(201).json({
       user: {
