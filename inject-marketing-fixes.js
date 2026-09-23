@@ -16,7 +16,15 @@ if (fixes.length === 0) {
   process.exit(0);
 }
 
-const injectedCode = fixes.map(f => f.code).join('\n');
+// Pages under public/ (privacy, terms, 404) are copied into dist by expo export and
+// already carry the marketing site's own Umami tag. Injecting the app's tracking
+// snippet there too double-counts every view under a second website ID, so skip any
+// fix that declares a data-website-id on pages that already declare one.
+const hasWebsiteId = (html) => /data-website-id=/.test(html);
+const codeFor = (html) => fixes
+  .filter(f => !(hasWebsiteId(f.code) && hasWebsiteId(html)))
+  .map(f => f.code)
+  .join('\n');
 
 const findHtmlFiles = (dir) => {
   let results = [];
@@ -45,7 +53,10 @@ const htmlFiles = findHtmlFiles(distDir);
 htmlFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf-8');
   if (content.includes('</head>')) {
-    if (!content.includes('marketing-os-injected')) {
+    const injectedCode = codeFor(content);
+    if (!injectedCode) {
+      console.log(`⏭️  Skipped ${path.relative(distDir, file)} (already has its own analytics tag)`);
+    } else if (!content.includes('marketing-os-injected')) {
       const wrappedCode = `\n<!-- marketing-os-injected -->\n${injectedCode}\n`;
       content = content.replace('</head>', wrappedCode + '</head>');
       fs.writeFileSync(file, content);
