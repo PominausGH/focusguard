@@ -44,7 +44,7 @@ jobs:
           target: ${{ secrets.VPS_DEPLOY_PATH }}
 
       - name: Build and deploy with Docker
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
