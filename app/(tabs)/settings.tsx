@@ -22,7 +22,11 @@ import { MusicLink, ThemeMode } from '../../types';
 import { useThemedStyles } from '../../hooks/useThemedStyles';
 
 export default function SettingsScreen() {
-  const { user, signOut, updateSettings } = useAuth();
+  const { user, signOut, deleteAccount, updateSettings } = useAuth();
+  const [showDelete, setShowDelete] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const { colors } = useTheme();
   const styles = useThemedStyles(createStyles);
   const [defaultSalary, setDefaultSalary] = useState(
@@ -106,6 +110,20 @@ export default function SettingsScreen() {
         ]
       );
     }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword || deleting) return;
+    setDeleting(true);
+    setDeleteError(null);
+    const error = await deleteAccount(deletePassword);
+    setDeleting(false);
+    if (error) {
+      setDeleteError(error);
+      return;
+    }
+    setDeletePassword('');
+    setShowDelete(false);
   };
 
   const handleSignOut = () => {
@@ -291,6 +309,59 @@ export default function SettingsScreen() {
           <Ionicons name="log-out-outline" size={24} color="#e94560" />
           <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
+
+        {!showDelete ? (
+          <TouchableOpacity
+            style={styles.deleteAccountLink}
+            onPress={() => setShowDelete(true)}
+            accessibilityRole="button"
+          >
+            <Text style={styles.deleteAccountLinkText}>Delete account</Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.deleteAccountBox}>
+            <Text style={styles.deleteAccountTitle}>Delete your account?</Text>
+            <Text style={styles.deleteAccountBody}>
+              This permanently deletes your account, tasks, focus sessions and analytics. It
+              can&apos;t be undone. Enter your password to confirm.
+            </Text>
+            <TextInput
+              style={styles.deleteAccountInput}
+              value={deletePassword}
+              onChangeText={setDeletePassword}
+              placeholder="Password"
+              placeholderTextColor={colors.textSecondary}
+              secureTextEntry
+              autoCapitalize="none"
+              accessibilityLabel="Password to confirm account deletion"
+            />
+            {deleteError ? <Text style={styles.deleteAccountError}>{deleteError}</Text> : null}
+            <View style={styles.deleteAccountActions}>
+              <TouchableOpacity
+                style={styles.deleteAccountCancel}
+                onPress={() => {
+                  setShowDelete(false);
+                  setDeletePassword('');
+                  setDeleteError(null);
+                }}
+              >
+                <Text style={styles.deleteAccountCancelText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.deleteAccountConfirm,
+                  (!deletePassword || deleting) && { opacity: 0.5 },
+                ]}
+                onPress={handleDeleteAccount}
+                disabled={!deletePassword || deleting}
+              >
+                <Text style={styles.deleteAccountConfirmText}>
+                  {deleting ? 'Deleting…' : 'Delete permanently'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
 
         <Text style={styles.footer}>FocusShield - The Anti-Productivity Productivity App</Text>
       </ScrollView>
@@ -517,6 +588,71 @@ const createStyles = (colors: any) =>
       color: colors.primary,
       fontSize: 18,
       fontWeight: '600',
+    },
+    deleteAccountLink: {
+      alignItems: 'center',
+      padding: 8,
+      marginBottom: 16,
+    },
+    deleteAccountLinkText: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      textDecorationLine: 'underline',
+    },
+    deleteAccountBox: {
+      borderWidth: 1,
+      borderColor: '#dc2626',
+      borderRadius: 16,
+      padding: 16,
+      marginBottom: 24,
+      gap: 10,
+    },
+    deleteAccountTitle: {
+      color: colors.text,
+      fontSize: 16,
+      fontWeight: '700',
+    },
+    deleteAccountBody: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    deleteAccountInput: {
+      color: colors.text,
+      fontSize: 16,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: colors.textSecondary,
+      borderRadius: 8,
+    },
+    deleteAccountError: {
+      color: '#dc2626',
+      fontSize: 14,
+    },
+    deleteAccountActions: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      gap: 12,
+    },
+    deleteAccountCancel: {
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+    },
+    deleteAccountCancelText: {
+      color: colors.text,
+      fontSize: 15,
+      fontWeight: '600',
+    },
+    deleteAccountConfirm: {
+      backgroundColor: '#dc2626',
+      borderRadius: 8,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+    },
+    deleteAccountConfirmText: {
+      color: '#ffffff',
+      fontSize: 15,
+      fontWeight: '700',
     },
     footer: {
       textAlign: 'center',

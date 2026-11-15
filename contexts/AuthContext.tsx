@@ -18,6 +18,8 @@ interface AuthContextType {
   signUp: (email: string, password: string, displayName: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  /** Permanently deletes the account; resolves to an error message, or null on success. */
+  deleteAccount: (password: string) => Promise<string | null>;
   updateSettings: (settings: Partial<User['settings']>) => void;
 }
 
@@ -204,6 +206,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  const deleteAccount = async (password: string): Promise<string | null> => {
+    if (DEMO_MODE) {
+      await signOut();
+      return null;
+    }
+    const response = await authApi.deleteAccount(password);
+    if (response.error) return response.error;
+    await clearToken();
+    setUser(null);
+    return null;
+  };
+
   const updateSettings = async (settings: Partial<User['settings']>) => {
     if (!user) return;
 
@@ -226,7 +240,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, updateSettings }}>
+    <AuthContext.Provider
+      value={{ user, loading, signUp, signIn, signOut, deleteAccount, updateSettings }}
+    >
       {children}
     </AuthContext.Provider>
   );

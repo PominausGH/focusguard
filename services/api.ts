@@ -130,6 +130,13 @@ export const authApi = {
       body: JSON.stringify({ settings }),
     });
   },
+
+  async deleteAccount(password: string): Promise<ApiResponse<{ deleted: boolean }>> {
+    return request<{ deleted: boolean }>('/auth/account', {
+      method: 'DELETE',
+      body: JSON.stringify({ password }),
+    });
+  },
 };
 
 // Tasks API
